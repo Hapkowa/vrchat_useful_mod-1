@@ -3,8 +3,8 @@
 
 ### **This is a free open-source client for VRChat - there is no paid version of this mod - made by hash#0404**
 
-# **If you need help installing my mod please watch this clip on how to install it** 
-## [Click here for a video guide](https://streamable.com/vom3jl)
+**If you need help installing my mod please watch this clip on how to install it** 
+[Click here for a video guide](https://streamable.com/vom3jl)
 
 If you are having issues please use the "Issues" function on github to create a new issue, same for recommendations.
 
