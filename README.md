@@ -30,6 +30,7 @@ If you are having issues please use the "Issues" function on github to create a 
 - Automatically disable avatar-spawn in music which can be absolutely annoying
 - Ability to add avatars to Fav+ with just the avatar ID
 - Ability to check a users public avatars by just the user ID
+- Being able to touch dynamic bones for chosen users (open beta)
 
 **How to install;**
 ## (REPLACE THE MANAGED FOLDER YOU ALREADY HAVE WITH THIS ONE - OCULUS CLIENT IS NOT SUPPORTED FULLY)
@@ -56,3 +57,4 @@ Using this is on your own risk, as any modifications to the client can lead to b
 Special thanks to;
 @Deathy
 @basic
+@Moons
