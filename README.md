@@ -2,11 +2,9 @@
 **This mod is made to be used with ([MelonLoader](https://github.com/HerpDerpinstine/MelonLoader)).**
 
 ### **This is a free open-source client for VRChat - there is no paid version of this mod - made by hash#0404**
+If you want to stay up to date join the discord server! [Click to join the update-server](https://discord.gg/9DeMwjs)
 
-**If you need help installing my mod please watch this clip on how to install it** 
-[Click here for a video guide](https://streamable.com/vom3jl)
 
-If you are having issues please use the "Issues" function on github to create a new issue, same for recommendations.
 
 **Features of this mod; (screenshots/installation instructions below)**
 - Flying / NoClip (Oculus compatible, right thumbstick up/down) (Desktop Q & E)
@@ -32,8 +30,10 @@ If you are having issues please use the "Issues" function on github to create a 
 - Ability to check a users public avatars by just the user ID
 - Being able to touch dynamic bones for chosen users (open beta)
 
+
+Please make sure to install the managed folder correctly! (Oculus client is not supported)
+
 **How to install;**
-## (REPLACE THE MANAGED FOLDER YOU ALREADY HAVE WITH THIS ONE - OCULUS CLIENT IS NOT SUPPORTED FULLY)
 - Download https://drive.google.com/open?id=1fonJQ09IVbw-2BxRTixeCHxvUQAmuCYw
 - Delete everything in the "MelonLoader\Managed" folder
 - Extract the 7z in the "MelonLoader\Managed" folder
@@ -41,6 +41,8 @@ If you are having issues please use the "Issues" function on github to create a 
 - Download the DLL on the latest release
 - Put the DLL into the "Mods" folder in your VRChat installation
 - Profit
+
+[Click here for a video guide](https://streamable.com/vom3jl)
 
 
 ![Example social page](https://i.imgur.com/xcCr993.png)
