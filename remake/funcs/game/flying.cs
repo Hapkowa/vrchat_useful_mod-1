@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +8,9 @@ using TestMod;
 using VRC;
 using VRC.Core;
 using VRCSDK2;
+using TestMod.remake.util;
+using Il2CppSystem.Net;
+using MelonLoader;
 
 namespace TestMod.remake.funcs.game
 {
@@ -26,8 +29,8 @@ namespace TestMod.remake.funcs.game
                 hashmod.fly_up = !hashmod.fly_up;
             }
 
-            if (Input.GetAxis("Oculus_CrossPlatform_SecondaryThumbstickVertical") < 0f) VRCPlayer.field_Internal_Static_VRCPlayer_0.gameObject.transform.position = VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position - new Vector3(0f, hashmod.flying_speed * Time.deltaTime, 0f);
-            if (Input.GetAxis("Oculus_CrossPlatform_SecondaryThumbstickVertical") > 0f) VRCPlayer.field_Internal_Static_VRCPlayer_0.gameObject.transform.position = VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position + new Vector3(0f, hashmod.flying_speed * Time.deltaTime, 0f);
+            if (Input.GetAxis("Oculus_CrossPlatform_SecondaryThumbstickVertical") < 0f) VRCPlayer.field_Internal_Static_VRCPlayer_0.gameObject.transform.position = VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position - new Vector3(0f, (hashmod.flying_speed * Time.deltaTime) * (Input.GetAxis("Oculus_CrossPlatform_SecondaryThumbstickVertical") * -1), 0f);
+            if (Input.GetAxis("Oculus_CrossPlatform_SecondaryThumbstickVertical") > 0f) VRCPlayer.field_Internal_Static_VRCPlayer_0.gameObject.transform.position = VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position + new Vector3(0f, (hashmod.flying_speed * Time.deltaTime) * (Input.GetAxis("Oculus_CrossPlatform_SecondaryThumbstickVertical")), 0f);
 
             if (hashmod.fly_down) VRCPlayer.field_Internal_Static_VRCPlayer_0.gameObject.transform.position = VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position - new Vector3(0f, hashmod.flying_speed * Time.deltaTime, 0f);
             if (hashmod.fly_up) VRCPlayer.field_Internal_Static_VRCPlayer_0.gameObject.transform.position = VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position + new Vector3(0f, hashmod.flying_speed * Time.deltaTime, 0f);
@@ -37,11 +40,14 @@ namespace TestMod.remake.funcs.game
             if (Input.GetKey(KeyCode.A)) VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position += VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.right * -1f * hashmod.flying_speed * Time.deltaTime;
             if (Input.GetKey(KeyCode.S)) VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position += VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.forward * -1f * hashmod.flying_speed * Time.deltaTime;
             if (Input.GetKey(KeyCode.D)) VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position += VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.right * hashmod.flying_speed * Time.deltaTime;
+            
+            var motion_com = VRCPlayer.field_Internal_Static_VRCPlayer_0.GetComponent<VRCMotionState>();
+            if (motion_com != null) motion_com.Method_Public_Void_0();
         }
         public static void noclip()
         {
             if (hashmod.isNoclip) Physics.gravity = new Vector3(0, 0, 0);
-            else Physics.gravity = new Vector3(0, -9.81f, 0);
+            else Physics.gravity = VRC_SceneDescriptor.Instance.gravity;
 
             Collider[] array = GameObject.FindObjectsOfType<Collider>();
             Component component = VRCPlayer.field_Internal_Static_VRCPlayer_0.GetComponents<Collider>().FirstOrDefault<Component>();
