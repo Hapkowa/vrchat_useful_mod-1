@@ -63,7 +63,7 @@ namespace TestMod
         public static Text slider_walkspeed_txt;
         public static float fov_cam = 60f;
         public static bool needs_update = false;
-        public static string mod_version = "23";
+        public static string mod_version = "24";
         public static bool fly_mode = false;
         public static bool clone_mode = true;
         public static bool delete_portals = false;
@@ -157,6 +157,7 @@ namespace TestMod
                     if (speed_hacks) speed.set_speeds(walk_speed, run_speed);
                     if (info_plus_toggle) infoplus.info_plus();
                     if (esp_players) visuals.esp_player();
+                    //dynbones.loop();
                     fov.set_cam_fov(fov_cam);
                 }
                 visuals.update_color();
@@ -458,6 +459,10 @@ namespace TestMod
                 if (found_player.get_api() == null) return;
                 dynbones.remove(found_player.field_Internal_VRCPlayer_0.prop_ApiAvatar_0.id);
                 dynbones.tracker(found_player.field_Internal_VRCPlayer_0.prop_ApiAvatar_0.id, found_player.field_Internal_VRCPlayer_0.gameObject, found_player.field_Internal_VRCPlayer_0.prop_VRCPlayerApi_0.displayName);
+
+                dynbones.remove(VRCPlayer.field_Internal_Static_VRCPlayer_0.prop_ApiAvatar_0.id);
+                dynbones.tracker(VRCPlayer.field_Internal_Static_VRCPlayer_0.prop_ApiAvatar_0.id, VRCPlayer.field_Internal_Static_VRCPlayer_0.gameObject, VRCPlayer.field_Internal_Static_VRCPlayer_0.prop_VRCPlayerApi_0.displayName);
+
             }),
             new Action(() =>
             {
