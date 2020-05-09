@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -81,7 +81,11 @@ namespace TestMod.remake.funcs.menu
                     if (hashmod.pub_list.listing_avatars.avatarPedestal.field_Internal_ApiAvatar_0.authorId == "") return;
                     pubavatar.update_public_user_list(hashmod.pub_list.listing_avatars.avatarPedestal.field_Internal_ApiAvatar_0.authorId);
                 }
-                else MelonModLogger.Log("please wait for getting public avatars again! (1 minute)");
+                else
+                {
+                    var sec_left = last_public_call - Time.time;
+                    hashmod.error_type_poput("Function is still on cooldown!", "Please wait " + sec_left + " seconds before trying again!");
+                }
             });
         }
     }
