@@ -42,6 +42,7 @@ using UnityEngine.SceneManagement;
 using DiskWars;
 using UnhollowerRuntimeLib;
 using UnityEngine.Events;
+using VRC.SDKBase;
 
 namespace TestMod
 {
@@ -62,7 +63,7 @@ namespace TestMod
         public static Text slider_walkspeed_txt;
         public static float fov_cam = 60f;
         public static bool needs_update = false;
-        public static string mod_version = "20";
+        public static string mod_version = "23";
         public static bool fly_mode = false;
         public static bool clone_mode = true;
         public static bool delete_portals = false;
@@ -105,17 +106,41 @@ namespace TestMod
         public override void OnLevelWasLoaded(int level)
         {
             anticrash.anti_crash_list.Clear();
+            dynbones.map.Clear();
         }
         public override void OnLevelWasInitialized(int level)
         {
             anticrash.anti_crash_list.Clear();
+            dynbones.map.Clear();
         }
-        
-
+        public enum NHDDDDJNDMB
+        {
+            // Token: 0x04005A9C RID: 23196
+            Undefined,
+            // Token: 0x04005A9D RID: 23197
+            Loading,
+            // Token: 0x04005A9E RID: 23198
+            Error,
+            // Token: 0x04005A9F RID: 23199
+            Blocked,
+            // Token: 0x04005AA0 RID: 23200
+            Safety,
+            // Token: 0x04005AA1 RID: 23201
+            Substitute,
+            // Token: 0x04005AA2 RID: 23202
+            Performance,
+            // Token: 0x04005AA3 RID: 23203
+            Custom
+        }
+        public static void error_type_poput(string Title, string Content)//error type message popup with confirm
+        {
+            Resources.FindObjectsOfTypeAll<VRCUiPopupManager>()[0].Method_Public_Void_String_String_Single_0(Title, Content, 20f);
+        }
         public override void OnUpdate()
         {
             try
             {
+                if (RoomManagerBase.prop_Boolean_3 == false) return;
                 menu.version_info();
                 if (sub_menu_open) menu.menu_toggle_handler();
                 if (clone_mode) direct_clone.direct_menu_clone();
@@ -162,6 +187,7 @@ namespace TestMod
 
         }
 
+        public static float last_apicall = 0;
         public override void VRChat_OnUiManagerInit()
         {
             var shortcutmenu = utils.get_quick_menu().transform.Find("ShortcutMenu");
@@ -205,6 +231,8 @@ namespace TestMod
                     }
 
                     MelonModLogger.Log("Asset for user " + userInfo.user.displayName + " -> " + found_player.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_0.assetUrl);
+                    MelonModLogger.Log("Avatar ID: " + found_player.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_0.id);
+                    MelonModLogger.Log("User ID: " + userInfo.user.id);
                 }));
 
                 clone_button_clonepub.gameObject.name = $"Clone 2";
@@ -266,7 +294,7 @@ namespace TestMod
                 {                    
                     fov_cam = v;
                     slider_fov_txt.text = "  Cam FOV (" + String.Format("{0:0.##}", v) + ")";                        
-                }, -3, 4, "  Cam FOV (" + String.Format("{0:0.##}", fov_cam) + ")", fov_cam, 180, 60, 350);
+                }, -3, 4, "  Cam FOV (" + String.Format("{0:0.##}", fov_cam) + ")", fov_cam, 100, 60, 350);
 
                 slider_flyspeed_txt = utils.make_slider(sub_menu_2, delegate (float v)
                 {
@@ -285,6 +313,90 @@ namespace TestMod
                     walk_speed = v;
                     slider_walkspeed_txt.text = "  Walk-speed (" + String.Format("{0:0.##}", v) + ")";
                 }, -1, 3, "  Walk-speed (" + String.Format("{0:0.##}", walk_speed) + ")", walk_speed, 20, 2, 200);
+
+                var add_by_id = btn_utils.create_btn(false, ButtonType.Default, "Add avatar to Fav+ by avatar ID", "Opens a dialog to add a avatar with just the avatar ID", Color.white, Color.red, -3, 1, sub_menu_2.transform,
+                new Action(() =>
+                {
+                    menu.input_text("Enter the avatar ID (avtr_...)", "Confirm", new Action<string>((a) =>
+                    {
+                        if (!a.Contains("avtr_"))
+                        {
+                            MelonModLogger.Log("Invalid avatar id!");
+                            return;
+                        }
+                        
+                        var model = new ApiAvatar();
+                        model.id = a;
+
+                        model.Get(DelegateSupport.ConvertDelegate<Il2CppSystem.Action<ApiContainer>>
+                        (new Action<ApiContainer>
+                        (delegate (ApiContainer t)
+                        {
+                            MelonModLogger.Log("Found avatar with name:" + model.name);
+                            MelonModLogger.Log("Avatar status is: " + model.releaseStatus);
+                            MelonModLogger.Log("Avatar asset URL: " + model.assetUrl);
+                            if (model.releaseStatus.Contains("public"))
+                            {
+                                //add to list
+                                avatar_utils.add_to_list(model);
+                                avatar_utils.update_list(avatar_config.avatar_list.Select(x => x.avatar_ident), hashmod.fav_list.listing_avatars);
+                                MelonModLogger.Log("Attempted to add model to fav+");
+                            }
+                            else
+                            {
+                                MelonModLogger.Log("Avatar is private, can not add to Fav+!");
+                            }
+                        })));
+                    }));
+                }),
+                new Action(() =>
+                {
+
+                }));
+
+                var pub_avatars_by_user_id = btn_utils.create_btn(false, ButtonType.Default, "Show public avatars by user ID", "Opens a dialog to look for the users public avatsr (Input a userid)", Color.white, Color.red, -2, 1, sub_menu_2.transform,
+                new Action(() =>
+                {
+                    if (Time.time > last_apicall)
+                    {
+                        last_apicall = Time.time + 60;
+                        menu.input_text("Enter the User ID (usr_...)", "Confirm", new Action<string>((a) =>
+                        {
+                            if (!a.Contains("usr_"))
+                            {
+                                MelonModLogger.Log("Invalid user id!");
+                                return;
+                            }
+
+                            pubavatar.update_public_user_list(a);
+                            MelonModLogger.Log("Check the avatar page to see public-avats by this author!");
+                            VRCUiManager.prop_VRCUiManager_0.Method_Public_Boolean_1();
+                        }));
+                    }
+                    else
+                    {
+                        var sec_left = last_apicall - Time.time;
+                        error_type_poput("Function is still on cooldown!", "Please wait " + sec_left + " seconds before trying again!");
+                    }
+                }),
+                new Action(() =>
+                {
+
+                }));
+
+                var resetdynbones = btn_utils.create_btn(false, ButtonType.Default, "Reset dynamic bone cache", "Forces dyn bones to re-apply colliders", Color.white, Color.red, -1, 1, sub_menu_2.transform,
+                new Action(() =>
+                {
+                    foreach (var a in dynbones.map)
+                    {
+                        dynbones.remove(a.Key);
+                    }
+                }),
+                new Action(() =>
+                {
+
+                }));
+
 
                 Application.targetFrameRate = 144;
             }
@@ -313,6 +425,44 @@ namespace TestMod
             {
 
             }));
+
+            var pubavatar_show = btn_utils.create_btn(false, ButtonType.Default, "Show public avatars", "Attempts to show all public avatars made by the selected user", Color.white, Color.red, -1, -1, utils.get_quick_menu().transform.Find("UserInteractMenu"),
+            new Action(() =>
+            {
+                if (Time.time > last_apicall)
+                {
+                    last_apicall = Time.time + 60;
+                    var found_player = utils.get_quick_menu().get_selected_player();
+                    if (found_player == null) return;
+                    if (found_player.get_api() == null) return;
+                    pubavatar.update_public_user_list(found_player.get_api().id);
+                    MelonModLogger.Log("pub users for usr: " + found_player.get_api().id);
+                    VRCUiManager.prop_VRCUiManager_0.Method_Public_Boolean_1();
+                }
+                else
+                {
+                    var sec_left = last_apicall - Time.time;
+                    error_type_poput("Function is still on cooldown!", "Please wait " + sec_left + " seconds before trying again!");
+                }
+            }),
+            new Action(() =>
+            {
+
+            }));
+
+            var dynbones_toggle = btn_utils.create_btn(false, ButtonType.Default, "Add dynamic bones", "Attempt to add all dynamic bones by the user", Color.white, Color.red, -2, -1, utils.get_quick_menu().transform.Find("UserInteractMenu"),
+            new Action(() =>
+            {
+                var found_player = utils.get_quick_menu().get_selected_player();
+                if (found_player == null) return;
+                if (found_player.get_api() == null) return;
+                dynbones.remove(found_player.field_Internal_VRCPlayer_0.prop_ApiAvatar_0.id);
+                dynbones.tracker(found_player.field_Internal_VRCPlayer_0.prop_ApiAvatar_0.id, found_player.field_Internal_VRCPlayer_0.gameObject, found_player.field_Internal_VRCPlayer_0.prop_VRCPlayerApi_0.displayName);
+            }),
+            new Action(() =>
+            {
+
+            }));
         }
 
         private static void main_menu()
@@ -328,17 +478,13 @@ namespace TestMod
                             {
                                 fly_mode = false;
                                 if (isNoclip) return;
-                                Physics.gravity = new Vector3(0, -9.81f, 0);
+                                Physics.gravity = VRCSDK2.VRC_SceneDescriptor.Instance.gravity;
                             }));
 
             var no_collision = btn_utils.create_btn(false, ButtonType.Toggle, "NoClip", "Disables collisions", Color.white, Color.red, -2, 1, sub_menu.transform,
             new Action(() =>
             {
-                if (fly_mode == true)
-                {
-                    Physics.gravity = new Vector3(0, -9.81f, 0);
-                    fly_mode = false;
-                }
+                if (fly_mode == true) fly_mode = false;                
                 isNoclip = true;
                 flying.noclip();
             }),
@@ -380,12 +526,7 @@ namespace TestMod
                 GameObject[] array = GameObject.FindGameObjectsWithTag("Player");
                 for (int i = 0; i < array.Length; i++)
                 {
-                    if (array[i].transform.Find("SelectRegion"))
-                    {
-                        array[i].transform.Find("SelectRegion").GetComponent<Renderer>().material.SetColor("_Color", Color.red);
-                        array[i].transform.Find("SelectRegion").GetComponent<Renderer>().sharedMaterial.SetColor("_Color", Color.red);
-                        utils.toggle_outline(array[i].transform.Find("SelectRegion").GetComponent<Renderer>(), false);
-                    }
+                    if (array[i].transform.Find("SelectRegion")) utils.toggle_outline(array[i].transform.Find("SelectRegion").GetComponent<Renderer>(), false);
                 }
             }));
 
