@@ -14,6 +14,7 @@ If you want to stay up to date join the discord server! [Click to join the updat
 - Colored names (red=private/green=public avatar)
 - Info+ which shows avatar status/blocked in social
 - Anti-portal (lobby wide)
+- Anti-portal ignore friends mode
 - Player pill ESP (with RBG)
 - Teleport to player in social or on selection
 - Enables jumping where jumping is disabled by the mapper
@@ -55,8 +56,12 @@ Disclaimer:
 This is not a official modification for VRChat and is not approved by any means.
 Using this is on your own risk, as any modifications to the client can lead to bans.
 
+Want to leave a donation?
+BTC: 3EYNMmVyux4h9dimR5VLxuWSbM3456m2Hk
+
 Special thanks to;
 - @Deathy
 - @basic
 - @Moons
 - @Dev
+- @Djdragon44 (Donation)
