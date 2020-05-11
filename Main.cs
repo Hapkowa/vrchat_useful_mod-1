@@ -71,6 +71,7 @@ namespace TestMod
         public static bool esp_players = false;
         public static bool info_plus_toggle = false;
         public static bool show_blocked_avatar = false;
+        public static float last_refresh = 0;
         public static bool anti_spawn_music = true;
         public static bool speed_hacks = false;
         public static float flying_speed = 4f;
@@ -82,6 +83,7 @@ namespace TestMod
         public static bool esp_rainbow_mode = true;
         public static bool sub_menu_open = false;
         public static bool sub_sub_menu_open = false;
+        public static bool init_social_refresh = false;
         public static GameObject sub_menu = null;
         public static GameObject sub_menu_2 = null;
         public static bool fly_down;
@@ -146,19 +148,16 @@ namespace TestMod
                 if (clone_mode) direct_clone.direct_menu_clone();
                 if (delete_portals) antiportal.auto_delete_portals();
                 if (isNoclip || fly_mode) flying.height_adjust();
+                if (anti_spawn_music) antispawn_sound.anti_spawn_sound();
                 if (Time.time > last_routine && utils.get_player_manager() != null)
                 {
                     last_routine = Time.time + 1;
-                    if (anti_crasher)
-                    {
-                        var thrd = new Thread((ThreadStart)anticrash.detect_crasher);
-                        thrd.Start();
-                    }
+                    if (anti_crasher) anticrash.detect_crasher();
                     if (speed_hacks) speed.set_speeds(walk_speed, run_speed);
                     if (info_plus_toggle) infoplus.info_plus();
                     if (esp_players) visuals.esp_player();
-                    //dynbones.loop();
                     fov.set_cam_fov(fov_cam);
+                    if (init_social_refresh == false) setup_refresh_button_social();
                 }
                 visuals.update_color();
             }
@@ -167,6 +166,60 @@ namespace TestMod
                 MelonModLogger.Log("Error in the main routine! " + e.Message + " in " + e.Source + " Stack: " + e.StackTrace);
             }
         }
+
+        private static void setup_refresh_button_social()
+        {
+            var found_edit_btn = GameObject.Find("Screens/Social/Current Status/StatusButton");
+            if (found_edit_btn != null)
+            {
+
+                init_social_refresh = true;
+                var button = found_edit_btn.transform.GetComponentInChildren<Button>();
+
+                var edit_btn_clone = UnityEngine.Object.Instantiate<GameObject>(button.gameObject);
+                edit_btn_clone.gameObject.name = "EditBtnClone";
+                edit_btn_clone.transform.localPosition += new Vector3(250, 0, 0);
+                edit_btn_clone.GetComponentInChildren<UnityEngine.UI.Text>().text = $"Refresh";
+                edit_btn_clone.GetComponentInChildren<UnityEngine.UI.Button>().onClick = new UnityEngine.UI.Button.ButtonClickedEvent();
+                edit_btn_clone.GetComponentInChildren<UnityEngine.UI.Button>().onClick.AddListener(new Action(() =>
+                {
+                    if (Time.time > last_refresh)
+                    {
+                        last_refresh = Time.time + 30;
+                        var page = Resources.FindObjectsOfTypeAll<UiVRCList>();
+                        if (page != null)
+                        {
+                            for (var i = 0; i < page.Count; i++)
+                            {
+                                var p = page[i];
+                                if (p == null) continue;
+
+                                p.Method_Public_Void_2();
+                                p.Method_Public_Void_1();
+                                p.Method_Public_Void_0();                                
+                            }
+                        }
+                    }
+                    else
+                    {
+                        var sec_left = last_refresh - Time.time;
+                        error_type_poput("Function is still on cooldown!", "Please wait " + Math.Floor(sec_left) + " seconds before trying again!");
+                    }
+                }));
+
+                var parent = GameObject.Find("Screens/Social/Current Status");
+                edit_btn_clone.transform.SetParent(parent.transform, false);
+
+                //move text a bit away
+                var found_text_name = GameObject.Find("Screens/Social/Current Status/StatusText");
+                found_text_name.GetComponent<Text>().transform.localPosition += new Vector3(250, 0, 0);
+
+                //move the icon
+                var found_statusicon = GameObject.Find("Screens/Social/Current Status/StatusIcon");
+                found_statusicon.transform.localPosition += new Vector3(250, 0, 0);
+            }
+        }
+
         public override void OnFixedUpdate()
         {
 
@@ -209,6 +262,8 @@ namespace TestMod
                 var clone_button_clonepub = UnityEngine.Object.Instantiate<GameObject>(back_button.gameObject);
                 var clone_button_clone_favplus = UnityEngine.Object.Instantiate<GameObject>(back_button.gameObject);
                 var clone_button_clone = UnityEngine.Object.Instantiate<GameObject>(utils.get_interact_menu().cloneAvatarButton.gameObject);
+
+               
 
                 clone_button.gameObject.name = "Teleport";
                 clone_button.transform.localPosition -= new Vector3(250, 0, 0);
@@ -377,7 +432,7 @@ namespace TestMod
                     else
                     {
                         var sec_left = last_apicall - Time.time;
-                        error_type_poput("Function is still on cooldown!", "Please wait " + sec_left + " seconds before trying again!");
+                        error_type_poput("Function is still on cooldown!", "Please wait " + Math.Floor(sec_left) + " seconds before trying again!");
                     }
                 }),
                 new Action(() =>
@@ -443,7 +498,7 @@ namespace TestMod
                 else
                 {
                     var sec_left = last_apicall - Time.time;
-                    error_type_poput("Function is still on cooldown!", "Please wait " + sec_left + " seconds before trying again!");
+                    error_type_poput("Function is still on cooldown!", "Please wait " + Math.Floor(sec_left) + " seconds before trying again!");
                 }
             }),
             new Action(() =>
