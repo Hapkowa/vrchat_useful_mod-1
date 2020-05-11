@@ -35,9 +35,7 @@ If you want to stay up to date join the discord server! [Click to join the updat
 Please make sure to install the managed folder correctly! (Oculus client is not supported)
 
 **How to install;**
-- Download https://drive.google.com/open?id=1fonJQ09IVbw-2BxRTixeCHxvUQAmuCYw
-- Delete everything in the "MelonLoader\Managed" folder
-- Extract the 7z in the "MelonLoader\Managed" folder
+- Install MelonLoader using the installer for version 0.3 https://github.com/thetrueyoshifan/MelonLoaderAutoInstaller/releases/download/1.4.3/MelonLoaderInstaller.bat
 - Go to the release page; https://github.com/kichiro1337/vrchat_useful_mod/releases
 - Download the DLL on the latest release
 - Put the DLL into the "Mods" folder in your VRChat installation
