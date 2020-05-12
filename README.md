@@ -31,6 +31,7 @@ If you want to stay up to date join the discord server! [Click to join the updat
 - Ability to check a users public avatars by just the user ID
 - Being able to touch dynamic bones for chosen users (open beta)
 - Social refresh button to update friends online/offline
+- Anti-Shader with custom local block list and server-fetched blacklist with ability to disable fetched list use
 
 
 Please make sure to install the managed folder correctly! (Oculus client is not supported)
@@ -65,3 +66,4 @@ Special thanks to;
 - @Moons
 - @Dev
 - @Djdragon44 (Donation)
+- @Emilia (auto installer)
