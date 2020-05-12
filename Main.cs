@@ -17,7 +17,7 @@ using System.Net.Http;
 using VRC;
 using VRTK.Controllables.ArtificialBased;
 using Transmtn.DTO;
-using TestMod;
+using hashmod;
 using UnityEngine.UI;
 using VRC.Core;
 using VRC.UI;
@@ -33,18 +33,19 @@ using Newtonsoft.Json;
 using Il2CppMono.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
-using TestMod.remake.util;
-using TestMod.remake.btn;
-using TestMod.remake.funcs.game;
-using TestMod.remake.funcs.menu;
+using hashmod.remake.util;
+using hashmod.remake.btn;
+using hashmod.remake.funcs.game;
+using hashmod.remake.funcs.menu;
 using Org.BouncyCastle.Math.Raw;
 using UnityEngine.SceneManagement;
 using DiskWars;
 using UnhollowerRuntimeLib;
 using UnityEngine.Events;
 using VRC.SDKBase;
+using VRCSDK2.Validation.Performance.Scanners;
 
-namespace TestMod
+namespace hashmod
 {
     public static class BuildInfo
     {
@@ -63,23 +64,27 @@ namespace TestMod
         public static Text slider_walkspeed_txt;
         public static float fov_cam = 60f;
         public static bool needs_update = false;
-        public static string mod_version = "24";
+        public static string mod_version = "26";
         public static bool fly_mode = false;
         public static bool clone_mode = true;
         public static bool delete_portals = false;
         public static bool anti_crasher = false;
+        public static bool rainbow_friend_nameborder = true;
         public static bool esp_players = false;
         public static bool info_plus_toggle = false;
         public static bool show_blocked_avatar = false;
+        public static bool should_use_fetched_list = true;
         public static float last_refresh = 0;
         public static bool anti_spawn_music = true;
         public static bool speed_hacks = false;
         public static float flying_speed = 4f;
         public static float run_speed = 10f;
         public static float walk_speed = 8f;
+        public static int max_fps = 144;
         public static int max_particles = 50000;
         public static int max_polygons = 500000;
         public static bool anti_crasher_ignore_friends = false;
+        public static bool anti_crasher_shader = false;
         public static bool esp_rainbow_mode = true;
         public static bool sub_menu_open = false;
         public static bool sub_sub_menu_open = false;
@@ -101,19 +106,23 @@ namespace TestMod
 
         public override void OnApplicationStart()
         {
+            anticrash.shader_list = new string[] { };
             var ini = new IniFile("hashcfg.ini");
             avatar_config.load(); avatar_config.avatar_list.Reverse(); ini.setup();
+            anticrash.shader_list_local = System.IO.File.ReadAllLines("hashmod_shaderlist.txt").ToList();
             needs_update = utils.check_version();
         }
         public override void OnLevelWasLoaded(int level)
         {
-            anticrash.anti_crash_list.Clear();
+            anticrash.anti_crash_list.Clear(); anticrash.player_data.Clear();
             dynbones.map.Clear();
+            antispawn_sound.avatar_list.Clear();
         }
         public override void OnLevelWasInitialized(int level)
         {
-            anticrash.anti_crash_list.Clear();
+            anticrash.anti_crash_list.Clear(); anticrash.player_data.Clear();
             dynbones.map.Clear();
+            antispawn_sound.avatar_list.Clear();
         }
         public enum NHDDDDJNDMB
         {
@@ -138,12 +147,35 @@ namespace TestMod
         {
             Resources.FindObjectsOfTypeAll<VRCUiPopupManager>()[0].Method_Public_Void_String_String_Single_0(Title, Content, 20f);
         }
+        public static List<GameObject> created_listing_objects = new List<GameObject>();
+        public static List<List<string>> shader_pages = new List<List<string>>();
+        public static int last_shader_page = 0;
+        public static string object_path(GameObject obj)
+        {
+            var path = "/" + obj.name;
+            while (obj.transform.parent != null)
+            {
+                obj = obj.transform.parent.gameObject;
+                path = "/" + obj.name + path;
+            }
+            return path;
+        }
+        public static void find_all_child_objects(GameObject obj)
+        {
+            MelonModLogger.Log(object_path(obj));
+            for (var i=0;i<obj.transform.childCount;i++)
+            {
+                var child = obj.transform.GetChild(i);                
+                find_all_child_objects(child.gameObject);
+            }
+        }
         public override void OnUpdate()
         {
             try
             {
                 if (RoomManagerBase.prop_Boolean_3 == false) return;
                 menu.version_info();
+                if (anti_crasher_shader) shader_menu.work();
                 if (sub_menu_open) menu.menu_toggle_handler();
                 if (clone_mode) direct_clone.direct_menu_clone();
                 if (delete_portals) antiportal.auto_delete_portals();
@@ -152,7 +184,7 @@ namespace TestMod
                 if (Time.time > last_routine && utils.get_player_manager() != null)
                 {
                     last_routine = Time.time + 1;
-                    if (anti_crasher) anticrash.detect_crasher();
+                    if (anti_crasher) anticrash.work();
                     if (speed_hacks) speed.set_speeds(walk_speed, run_speed);
                     if (info_plus_toggle) infoplus.info_plus();
                     if (esp_players) visuals.esp_player();
@@ -160,6 +192,7 @@ namespace TestMod
                     if (init_social_refresh == false) setup_refresh_button_social();
                 }
                 visuals.update_color();
+                if (rainbow_friend_nameborder) name_border_rbg.name_border_clr();
             }
             catch (Exception e)
             {
@@ -196,7 +229,7 @@ namespace TestMod
 
                                 p.Method_Public_Void_2();
                                 p.Method_Public_Void_1();
-                                p.Method_Public_Void_0();                                
+                                p.Method_Public_Void_0();
                             }
                         }
                     }
@@ -262,8 +295,6 @@ namespace TestMod
                 var clone_button_clonepub = UnityEngine.Object.Instantiate<GameObject>(back_button.gameObject);
                 var clone_button_clone_favplus = UnityEngine.Object.Instantiate<GameObject>(back_button.gameObject);
                 var clone_button_clone = UnityEngine.Object.Instantiate<GameObject>(utils.get_interact_menu().cloneAvatarButton.gameObject);
-
-               
 
                 clone_button.gameObject.name = "Teleport";
                 clone_button.transform.localPosition -= new Vector3(250, 0, 0);
@@ -346,10 +377,10 @@ namespace TestMod
                 direct_menu();
 
                 //menu 2
-                slider_fov_txt = utils.make_slider(sub_menu_2, delegate (float v) 
-                {                    
+                slider_fov_txt = utils.make_slider(sub_menu_2, delegate (float v)
+                {
                     fov_cam = v;
-                    slider_fov_txt.text = "  Cam FOV (" + String.Format("{0:0.##}", v) + ")";                        
+                    slider_fov_txt.text = "  Cam FOV (" + String.Format("{0:0.##}", v) + ")";
                 }, -3, 4, "  Cam FOV (" + String.Format("{0:0.##}", fov_cam) + ")", fov_cam, 100, 60, 350);
 
                 slider_flyspeed_txt = utils.make_slider(sub_menu_2, delegate (float v)
@@ -380,7 +411,7 @@ namespace TestMod
                             MelonModLogger.Log("Invalid avatar id!");
                             return;
                         }
-                        
+
                         var model = new ApiAvatar();
                         model.id = a;
 
@@ -408,6 +439,46 @@ namespace TestMod
                 new Action(() =>
                 {
 
+                }));
+
+                var rainbow_nameborder_friends = btn_utils.create_btn(rainbow_friend_nameborder, ButtonType.Toggle, "RBG friend border", "Enables a rainbow effect for friends name borders", Color.white, Color.red, -3, 0, sub_menu_2.transform,
+                new Action(() =>
+                {
+                    rainbow_friend_nameborder = true;
+                }),
+                new Action(() =>
+                {
+                    rainbow_friend_nameborder = false;
+                    //and reset colors
+                    var users = utils.get_all_player();
+                    if (users == null) return;
+                    for (var i = 0; i < users.Count; i++)
+                    {
+                        var obj = users[i];
+                        if (obj == null) continue;
+                        if (obj.field_Private_APIUser_0 == null) continue;
+                        if (obj.field_Private_APIUser_0.isFriend == false) continue;
+                        obj.field_Private_VRCPlayerApi_0.SetNamePlateColor(new Color(1f, 1f, 0f));
+                    }
+                }));
+                var antishader = btn_utils.create_btn(anti_crasher_shader, ButtonType.Toggle, "Anti-shader", "Attempts to remove possibly toxic shaders", Color.white, Color.red, -2, 0, sub_menu_2.transform,
+                new Action(() =>
+                {
+                    anti_crasher_shader = true;
+                }),
+                new Action(() =>
+                {
+                    anti_crasher_shader = false;
+                    shader_menu.reset_all();
+                }));
+                var antishader_fetched_list = btn_utils.create_btn(should_use_fetched_list, ButtonType.Toggle, "Anti-shader Fetched", "Will enable anti-shader to use a server hosted list of shaders as well", Color.white, Color.red, -1, 0, sub_menu_2.transform,
+                new Action(() =>
+                {
+                    should_use_fetched_list = true;
+                }),
+                new Action(() =>
+                {
+                    should_use_fetched_list = false;
                 }));
 
                 var pub_avatars_by_user_id = btn_utils.create_btn(false, ButtonType.Default, "Show public avatars by user ID", "Opens a dialog to look for the users public avatsr (Input a userid)", Color.white, Color.red, -2, 1, sub_menu_2.transform,
@@ -544,7 +615,7 @@ namespace TestMod
             var no_collision = btn_utils.create_btn(false, ButtonType.Toggle, "NoClip", "Disables collisions", Color.white, Color.red, -2, 1, sub_menu.transform,
             new Action(() =>
             {
-                if (fly_mode == true) fly_mode = false;                
+                if (fly_mode == true) fly_mode = false;
                 isNoclip = true;
                 flying.noclip();
             }),
