@@ -42,7 +42,7 @@ namespace TestMod.remake.funcs.game
             if (Input.GetKey(KeyCode.D)) VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position += VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.right * hashmod.flying_speed * Time.deltaTime;
             
             var motion_com = VRCPlayer.field_Internal_Static_VRCPlayer_0.GetComponent<VRCMotionState>();
-            if (motion_com != null) motion_com.Method_Public_Void_0();
+            if (motion_com != null) motion_com.Method_Public_Void_3();
         }
         public static void noclip()
         {
