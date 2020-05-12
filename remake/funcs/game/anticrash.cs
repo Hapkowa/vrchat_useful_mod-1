@@ -12,13 +12,21 @@ using Transmtn.DTO;
 using UnityEngine.UI;
 using VRC.Core;
 using MelonLoader;
-using TestMod.remake.util;
+using hashmod.remake.util;
+using Il2CppSystem.Net;
+using Il2CppMono.Security.X509;
+using Il2CppSystem.Security.Cryptography.X509Certificates;
+using Il2CppSystem.Net.Security;
 
-namespace TestMod.remake.funcs.game
+using Il2CppMono.Security;
+using System.Security.Cryptography.X509Certificates;
+using System.Net.Security;
+
+namespace hashmod.remake.funcs.game
 {
     public static class anticrash
     {
-        public static Dictionary<string, avatar_data> anti_crash_list = new Dictionary<string, avatar_data>(); 
+        public static Dictionary<string, avatar_data> anti_crash_list = new Dictionary<string, avatar_data>();
         private static int get_poly_count(GameObject player)
         {
             var poly_count = 0;
@@ -48,7 +56,7 @@ namespace TestMod.remake.funcs.game
             var skinnedMeshRenderer = r as SkinnedMeshRenderer;
             if (skinnedMeshRenderer != null)
             {
-                if (skinnedMeshRenderer.sharedMesh == null) return 0;                
+                if (skinnedMeshRenderer.sharedMesh == null) return 0;
                 num += count_poly_meshes(skinnedMeshRenderer.sharedMesh);
             }
             return num;
@@ -57,127 +65,212 @@ namespace TestMod.remake.funcs.game
         {
             bool flag = false;
             Mesh mesh;
-            if (sourceMesh.isReadable)  mesh = sourceMesh;            
+            if (sourceMesh.isReadable) mesh = sourceMesh;
             else
             {
                 mesh = UnityEngine.Object.Instantiate<Mesh>(sourceMesh);
                 flag = true;
             }
             int num = 0;
-            for (int i = 0; i < mesh.subMeshCount; i++) num += mesh.GetTriangles(i).Length / 3;            
-            if (flag) UnityEngine.Object.Destroy(mesh);            
+            for (int i = 0; i < mesh.subMeshCount; i++) num += mesh.GetTriangles(i).Length / 3;
+            if (flag) UnityEngine.Object.Destroy(mesh);
             return num;
-        }        
-        public static void detect_crasher()
+        }
+        public struct user_data
         {
-            //2420 poly = loading char
-            var users_active = utils.get_all_player();
-            if (users_active == null) return;
-            for (var c = 0; c < users_active.Count; c++)
+            public string avid;
+            public bool was_checked;
+        }
+        public static Dictionary<string, user_data> player_data = new Dictionary<string, user_data>();
+        public static user_data user_by_id(string id)
+        {
+            foreach (var obj in player_data) if (obj.Key.Contains(id)) return obj.Value;
+            return new user_data() { avid = "why cant this return be null what the fuck" };
+        }
+        public static bool has_changed_avatar(Player user)
+        {
+            if (player_data.Count == 0) return false;
+            var avatar_known = player_data.ContainsKey(user.field_Private_APIUser_0.id);
+            if (avatar_known)
             {
-                var user = users_active[c];
-                if (user == null || user.prop_VRCAvatarManager_0 == null || user.field_Private_APIUser_0 == null) continue;
-                if (user.field_Private_VRCAvatarManager_0 == null) continue;
-                if (user.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_0 == null) continue;
-                if (VRCPlayer.field_Internal_Static_VRCPlayer_0 == null) continue;
-                if (user.field_Private_APIUser_0.id == VRCPlayer.field_Internal_Static_VRCPlayer_0.field_Private_Player_0.field_Private_APIUser_0.id) continue;
-                if (user.prop_VRCAvatarManager_0.enabled == false) continue;
-                if (hashmod.anti_crasher_ignore_friends) if (user.get_api().isFriend) continue;
-                //check if player is known
-                var poly_count = 0; bool user_was_blocked = false;
-                var contains = anti_crash_list.ContainsKey(user.field_Private_APIUser_0.id);
-                if (contains == false)
+                if (player_data[user.field_Private_APIUser_0.id].avid.Contains(user.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_0.id)) return false;
+                else return true;
+            }
+            return false;
+        }
+        public static void delete_user_avis(Player user)
+        {
+            try//can fail if none are present but hey who fucking cares right
+            {
+                if (player_data.Count == 0) return;
+                foreach (var obj in player_data)
                 {
-                    poly_count = get_poly_count(user.gameObject);
-                    var container = new avatar_data();
-                    container.asseturl = user.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_0.assetUrl; container.polys = poly_count;
-                    anti_crash_list.Add(user.field_Private_APIUser_0.id, container);
+                    if (obj.Key == null) continue; if (obj.Value.avid == null) continue;
+                    if (obj.Key.Contains(user.field_Private_APIUser_0.id)) continue; /*dont delete the current avis*/
+                    if (obj.Value.avid.Contains(user.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_0.id)) player_data.Remove(obj.Key);
                 }
+            }
+            catch (Exception e) { }
+        }
+        public static bool should_check_user(Player user)
+        {
+            if (hashmod.anti_crasher_ignore_friends) if (user.get_api().isFriend) return false;
+            try//yeah no one cares sdfjnjsdfjdsfjfnfsdn
+            {
+                /*see if the user is even using fucking avatar that is loaded in*/
+                if (Enum.GetName(typeof(hashmod.NHDDDDJNDMB), user.field_Internal_VRCPlayer_0.prop_VRCAvatarManager_0.prop_EnumNPublicSealedva9vUnique_0).Contains("Custom") == false) return false;
+                var entry = user_by_id(user.field_Private_APIUser_0.id);
+                /*means we have not checked the user yet neither his shit so do that?*/
+                if (entry.avid.Contains("why cant this return be null what the fuck")) return true;
                 else
                 {
-                    poly_count = get_poly_count(user.gameObject);
-                    if (anti_crash_list[user.field_Private_APIUser_0.id].polys == poly_count)
+                    /*remove that guy and uh can i have like a medium coke with that, and his avatar from all other lists if used*/
+                    if (has_changed_avatar(user))
                     {
-                        //still same count skip
-                        continue;
+                        player_data.Remove(user.field_Private_APIUser_0.id);
+                        delete_user_avis(user);
+                        return true;
                     }
-                    if (poly_count <= 2420 || anti_crash_list[user.field_Private_APIUser_0.id].polys == -1)
+                    if (entry.was_checked == true) return false;
+                    else
                     {
-                        //still loading or blocked
-                        var container = new avatar_data();
-                        container.asseturl = user.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_0.assetUrl;
-                        if (poly_count <= 2420) container.polys = -1; //check again next iteration
-                        else container.polys = poly_count; //seems we have a result
-                        anti_crash_list[user.field_Private_APIUser_0.id] = container;
-                        if (container.polys == -1) continue; /*skip for this iteration*/
+                        player_data.Remove(user.field_Private_APIUser_0.id);
+                        return true;
                     }
                 }
-
-                if (poly_count == 0) poly_count = get_poly_count(user.gameObject);
-
-                /*update poly count and avi asset*/
-                var avi = new avatar_data();
-                avi.asseturl = user.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_0.assetUrl;
-                avi.polys = poly_count;
-                anti_crash_list[user.field_Private_APIUser_0.id] = avi;
-
-                if (poly_count >= hashmod.max_polygons || user.prop_VRCAvatarManager_0.prop_ApiAvatar_0.id == "avtr_3bab9417-b18a-46b7-9de8-0e06393ad998") // eternally block this fucking penis troll character omfg
+            }
+            catch (Exception e) { return false; }
+        }
+        public static bool particle_check(Player user)
+        {
+            var particle_sys = user.GetComponentsInChildren<ParticleSystem>();
+            if (particle_sys == null ||
+                particle_sys.Count == 0) return false;
+            var total_particles = 0; var count_particles = 0;
+            for (var i = 0; i < particle_sys.Count; i++)
+            {
+                var obj = particle_sys[i];
+                if (obj == null) continue;
+                total_particles += obj.maxParticles; count_particles += obj.particleCount;
+            }
+            if (total_particles >= hashmod.max_particles || count_particles >= hashmod.max_particles)
+            {
+                for (var i = 0; i < particle_sys.Count; i++)
                 {
-                    /*destroy all renderers to ensure avatar is dead*/
-                    foreach (var obj in user.field_Private_VRCAvatarManager_0.GetComponentsInChildren<Renderer>())
-                    {
-                        if (obj == null) continue;
-                        obj.enabled = false;
-                        UnityEngine.Object.Destroy(obj);
-                    }
-                    MelonModLogger.Log("[!!!] disabled avatar for user \"" + user.field_Private_APIUser_0.displayName.ToString() + "\" with polys " + poly_count.ToString());
-                    user_was_blocked = true;
-                }
-                var particle_sys = user.GetComponentsInChildren<ParticleSystem>();
-                var particle_count = 0; var particle_max = 0;
-                void disable_player() //lambda i guess is a thing in c#?
-                {
-                    foreach (var sys in particle_sys)
-                    {
-                        if (sys == null) continue;
-                        var particle_renderer = sys.GetComponent<ParticleSystemRenderer>();
-                        if (particle_renderer == null) continue;
-                        if (particle_renderer.enabled == false) continue;
-                        sys.Stop(true);
-                        particle_renderer.enabled = false;
-                        user_was_blocked = true;
-                    }
-                }
-                foreach (var sys in particle_sys)
-                {
-                    if (sys == null) continue;
-                    var particle_renderer = sys.GetComponent<ParticleSystemRenderer>();
+                    var obj = particle_sys[i];
+                    if (obj == null) continue;
+                    var particle_renderer = obj.GetComponent<ParticleSystemRenderer>();
                     if (particle_renderer == null) continue;
                     if (particle_renderer.enabled == false) continue;
-                    particle_count += sys.particleCount; particle_max += sys.maxParticles;
+                    obj.Stop(true);
+                    particle_renderer.enabled = false;
                 }
-                //looks if user has spawn audio playing god i hate this everyone must die who uses them
-                if (hashmod.anti_spawn_music)
+                return true;
+            }
+            return false;
+        }
+        public static bool polygon_check(Player user, int polys)
+        {
+            //MelonModLogger.Log("polys for user \"" + user.field_Private_VRCPlayerApi_0.displayName + "\" " + polys);
+            if (polys >= hashmod.max_polygons)
+            {
+                var renderers = user.field_Private_VRCAvatarManager_0.GetComponentsInChildren<Renderer>();
+                for (var i = 0; i < renderers.Count; i++)
                 {
-                    var audio_components = user.GetComponentsInChildren<AudioSource>(true);
-                    foreach (var obj in audio_components)
+                    var obj = renderers[i];
+                    if (obj == null ||
+                        obj.enabled == false) continue;
+                    obj.enabled = false;
+                    UnityEngine.Object.Destroy(obj);
+                }
+                return true;
+            }
+            return false;
+        }
+        public static string[] shader_list;
+        public static List<string> shader_list_local = new List<string>();
+        public static bool shader_check(Player user)
+        {
+            if (user.get_api().id == APIUser.CurrentUser.id) return false;
+            var renderers = user.field_Private_VRCAvatarManager_0.GetComponentsInChildren<Renderer>(true);
+            var default_shader = Shader.Find("Standard"); var did_change = false;
+            for (var i = 0; i < renderers.Count; i++)
+            {
+                var obj = renderers[i];
+                if (obj == null) continue;
+                for (var m = 0; m < obj.materials.Count; m++)
+                {
+                    var mat = obj.materials[m];
+                    var should_normalize = false;
+                    if (hashmod.should_use_fetched_list)
                     {
-                        if (obj.isPlaying == false) continue;
-                        obj.Stop();
-                        MelonModLogger.Log("[!!!] disabled spawn-sound for user \"" + user.field_Private_APIUser_0.displayName.ToString() + "\" cuz fuck this guy");
+                        foreach (var n in anticrash.shader_list)
+                        {
+                            if (mat.shader.name.Equals(n))
+                            {
+                                should_normalize = true;
+                                break;
+                            }
+                        }
+                    }
+                    foreach (var n in anticrash.shader_list_local)
+                    {
+                        if (mat.shader.name.Equals(n))
+                        {
+                            should_normalize = true;
+                            break;
+                        }
+                    }
+                    if (should_normalize == true)
+                    {
+                        UnityEngine.Object.Destroy(mat);
+                        did_change = true;
                     }
                 }
-                if (particle_max >= hashmod.max_particles)
+            }
+            if (did_change == false) return false;
+            else return true;
+        }
+        public static void work()
+        {
+            if (shader_list.Length == 0) shader_list = utils.get_shader_blacklist();
+            var users = utils.get_all_player();
+            if (users == null || users.Count == 0) return;
+            for (var i = 0; i < users.Count; i++)
+            {
+                var user = users[i];
+                if (user == null) continue;
+                /*i swear to fucking fgnngfhngfnhgnfhngfhn*/
+                if (user.field_Private_APIUser_0 == null ||
+                    user.field_Private_VRCAvatarManager_0 == null ||
+                    user.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_0 == null ||
+                    user.field_Internal_VRCPlayer_0 == null ||
+                    user.field_Internal_VRCPlayer_0.prop_VRCAvatarManager_0 == null) continue;
+                if (should_check_user(user) == false) continue;
+                /*add the guy first before we die or smth*/
+                var data = user_by_id(user.field_Private_APIUser_0.id);
+                if (data.avid.Contains("why cant this return be null what the fuck")) player_data.Add(user.field_Private_APIUser_0.id, new user_data() { avid = user.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_0.id, was_checked = false });
+                var polygon_count = get_poly_count(user.gameObject);
+                if (polygon_count <= 2420)//still loading wwwwwwwwwwww
                 {
-                    disable_player();
-                    MelonModLogger.Log("[!!!] disabled particles for user \"" + user.field_Private_APIUser_0.displayName.ToString() + "\" with particle_max " + particle_max.ToString());
+                    player_data.Remove(user.field_Private_APIUser_0.id);
+                    delete_user_avis(user);
+                    continue;
                 }
-                if (particle_count >= hashmod.max_particles)
+                var blocked_particles = particle_check(user);
+                var blocked_avatar = polygon_check(user, polygon_count);
+                if (hashmod.anti_crasher_shader)
                 {
-                    disable_player();
-                    MelonModLogger.Log("[!!!] disabled particles for user \"" + user.field_Private_APIUser_0.displayName.ToString() + "\" with particle_count " + particle_count.ToString());
+                    var blocked_shaders = shader_check(user);
+                    if (blocked_shaders) MelonModLogger.Log("[!!!] nuked shaders for \"" + user.field_Private_APIUser_0.displayName.ToString() + "\"");
                 }
-                if (user_was_blocked) MelonModLogger.Log("[!!!] user \"" + user.field_Private_APIUser_0.displayName.ToString() + "\" was detected as potential crasher");
+                if (blocked_particles) MelonModLogger.Log("[!!!] nuked particles for \"" + user.field_Private_APIUser_0.displayName.ToString() + "\"");
+                if (blocked_avatar) MelonModLogger.Log("[!!!] nuked avatar for \"" + user.field_Private_APIUser_0.displayName.ToString() + "\"");
+                /*why the actual fuck is this not one line able erjnkgnjrkewgbjnwerjngerwjngwerg*/
+                //player_data[user.field_Private_APIUser_0.id].was_checked = true; HOW DOES IT NOT WORK
+                //this is shit do not ever do this, c# is shit
+                player_data.Remove(user.field_Private_APIUser_0.id);
+                player_data.Add(user.field_Private_APIUser_0.id, new user_data() { avid = user.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_0.id, was_checked = true });
             }
         }
     }
