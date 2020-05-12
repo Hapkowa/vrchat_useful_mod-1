@@ -143,3 +143,41 @@ EspaÑol/
 EspaÑol
 KYSautismoÑoño/
 KYSautismoÑoño
+kyran/e
+shader forge/takeyourtimebox
+unlit/jumpscare
+instant
+asesampleshaders/tessellation
+custom/oof
+fx/starnest
+all4thlulz/starnest (screen space)
+.star/bacon
+.woofaa/pup's
+.woofaa/blackhole
+custom/bluescreen
+knuckles_gang/free
+particles/nword
+voidyShaders/cave
+.woofaa/medusa
+theone
+sstandard
+onion
+myxelf/crashhehe
+dbtc
+shaderman/planet shadertoy
+zer0/customparallax
+distancebased
+izzy/izzycdf
+umbrella killer
+custom/custom
+izzy/
+unlit/failshader
+massive oof/nigga this shit hurt
+redmage/cancerspace
+chenjd/forcefield
+btd/dustfunhousev2
+rx/crazy emission
+mag/blackhole
+custom/standards
+custom/sprythu
+custom/nest
