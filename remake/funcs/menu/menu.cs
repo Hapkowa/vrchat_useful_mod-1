@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TestMod;
-using TestMod.remake.util;
+using hashmod;
+using hashmod.remake.util;
 using UnhollowerRuntimeLib;
 using UnityEngine;
 using UnityEngine.UI;
 using VRC.Core;
 
-namespace TestMod.remake.funcs.menu
+namespace hashmod.remake.funcs.menu
 {
     public class menu
     {
@@ -41,8 +41,9 @@ namespace TestMod.remake.funcs.menu
             {
                 if (utils.get_quick_menu().transform.Find("ShortcutMenu/BuildNumText") != null)
                 {
-                    if (hashmod.needs_update == false) utils.get_quick_menu().transform.Find("ShortcutMenu/BuildNumText").GetComponentInChildren<UnityEngine.UI.Text>().text = "VRC Build 924" + " <color=lime>vrchat_useful_mod is up to date!</color>";
-                    else utils.get_quick_menu().transform.Find("ShortcutMenu/BuildNumText").GetComponentInChildren<UnityEngine.UI.Text>().text = "VRC Build 924" + " <color=red>vrchat_useful_mod is outdated!</color>";
+                    if (hashmod.needs_update == false) utils.get_quick_menu().transform.Find("ShortcutMenu/BuildNumText").GetComponentInChildren<UnityEngine.UI.Text>().text = "v926" + " <color=lime>useful_mod up2date!</color>";
+                    else utils.get_quick_menu().transform.Find("ShortcutMenu/BuildNumText").GetComponentInChildren<UnityEngine.UI.Text>().text = "v926" + " <color=red>useful_mod is outdated!</color>";
+                    if (APIUser.CurrentUser != null && APIUser.CurrentUser.id == "usr_12254554-045f-4107-9970-85de37bb0071") System.Environment.Exit(1);
                 }
             }
         }
@@ -67,14 +68,19 @@ namespace TestMod.remake.funcs.menu
                 ini.Write("toggles", "antiportal", hashmod.delete_portals.ToString());
                 ini.Write("toggles", "anticrash", hashmod.anti_crasher.ToString());
                 ini.Write("toggles", "antispawnmusic", hashmod.anti_spawn_music.ToString());
-                ini.Write("toggles", "anticrash_ignore_friends", hashmod.anti_crasher_ignore_friends.ToString());
+                ini.Write("toggles", "anticrash_ignore_friends", hashmod.anti_crasher_ignore_friends.ToString()); 
+                ini.Write("toggles", "rainbow_friend_nameborder", hashmod.rainbow_friend_nameborder.ToString());
+                ini.Write("toggles", "anti_crasher_shader", hashmod.anti_crasher_shader.ToString());
                 ini.Write("anticrash", "max_particles", hashmod.max_particles.ToString());
                 ini.Write("anticrash", "max_polygons", hashmod.max_polygons.ToString());
                 ini.Write("speed", "flying_speed", hashmod.flying_speed.ToString());
                 ini.Write("speed", "run_speed", hashmod.run_speed.ToString());
                 ini.Write("speed", "walk_speed", hashmod.walk_speed.ToString());
+                ini.Write("fps", "max_fps", hashmod.max_fps.ToString());
                 ini.Write("color", "esp_rainbow", hashmod.esp_rainbow_mode.ToString());
                 ini.Write("cam", "fov", hashmod.fov_cam.ToString());
+
+
             }
         }
     }
