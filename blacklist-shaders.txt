@@ -296,7 +296,6 @@ Nath✮/Toon/Opaque
 NEK0/ Color Screen 
 Doppels shaders/ScreenFX/Dope Shader SuckMyDickDoppel
 Omenous/TEXTURE
-Doppels shaders/MetallicFXOverRenderByNath
 DocMe/ShaderToy/Question of Time
 DocMe/Beautiful_V4.20.shader
 Doppels shaders/MetallicFX v5.0OverRender
@@ -304,7 +303,6 @@ Leviant's Shaders/FreezeScreenTrueOne
 Leviant's Shaders/GrabScreenTrueOne
 myXelf/OpacityUV
 KyoukoZ/HSL Additive
-Leviant's Shaders/UberShader v2.9
 FruityFusion/TunnelEditNath
 Bender's Shaders/Screen FX/Screen Glitch
 .SENDO/Toon/Test SendoLS Toon Beta V1.1
@@ -327,3 +325,647 @@ KriptoFX/ME/Distortion
 KriptoFX/ME/DistortionMobile
 KriptoFX/RFX4/Particle
 Decal/particle decal additive
+KriptoFX/ME/DistortPerlinMobile
+Ciconia Studio/Double Sided/Emissive/Diffuse
+Doppels shaders/ScreenFX/Dope Shader Corpse
+XomAy_y/XomAy_yShaderAMPLOFFv.3
+XomAy_y/XomAy_yShaderAMPLOFFV.2
+Disconnect/AntiShader/AntiShader Step 2
+DocMe/Anti/AntiShader1
+Aidan/ShaderToy/Question of Time v1.2
+DocMe/EpicShader
+Disconnect/AntiShader/AntiShader Step 1
+DocMe/Beautiful
+DocMe/AntiShader2
+DocMe/AntiShader1
+.poiyomi/Toon/Default/OpaqueOld
+.Loli_Explorer.exe/Eye Shader ZTest
+.Loli_Explorer.exe/Eye Shader
+DasLucas/BlackGlitch
+DasLucas/BlackGlitchZTesttt
+.poiyomi/Toon/Default/OpaqueZTest
+DocMe/BeautifulShaderv0.21
+DasLucas/LightingV2
+DasLucas/LightingV2ZTest
+FX/Flare
+FruityFusion/FusionVFX 3.0
+Mochie/Uber Shader (Opaque)
+Mochie/Mochie's Uber Shader (Opaque)
+Particles/Additive (Soft)
+Doppels shaders/Distortion Wave 3D Sphere mesh
+DEDSEC/FX
+Mochie/Mochie's Screen FX
+KriptoFX/RFX4/DistortionParticles
+SM/SM_Add
+StartSphereV6
+.poiyomi/Toon/Default/Opaque
+Leviant's Shaders/UberShader v2.9
+_Shaders/Rainbow
+AV/Unlit/Hexagons
+.NEK0/Screen/Colorfun
+.NEK0/Screen/GrayScale 04.05
+Doppels shaders/Dope Shader v1.13
+Leviant's Shaders/ScreenSpace Ubershader v2.7.3
+Corpse/Uber Particle v1.4
+Screen Ripple/Droplet
+Bender's Shaders/Screen FX/Screen Fade
+Naito/Rainbow World
+Doppels shaders/MetallicFXOverRenderByNath
+0verrender
+11h2hh3hjej3
+80s Movie
+753/
+753/Additive
+753/Additive overlay
+753/TrueImage
+753/trueimage
+7345687/6482375wer
+565416541651
+9874654876468d46as5d46as5d7a98we7a84d65as468w7e9q6as8d6s4d5as4d5as6da4s6546a8ew76a8w4e687eq89e7
+!zer0/
+!zero/
+./n3k0
+./n3ko
+./nek0
+./neko
+.Borple/Standard
+.borple/standard
+.docme/
+.gr0axy/
+.gr04xy/
+.groaxy/
+.loli_explorer.exe
+.loli_explorer.exe/
+.n3k0/
+.n3ko/
+.nek0/
+.poiyomi/crazy shader master
+.SENDO/Toon/Test SendoLS Toon Beta V1.1
+.shadertoy/
+.Star/Bacon
+.star/bacon
+.Woofaa/Blackhole
+.woofaa/blackhole
+.Woofaa/Blue_Screen
+.woofaa/blue_screen
+.Woofaa/GPU_Crash
+.woofaa/gpu_crash
+.Woofaa/Instant_BPU
+.woofaa/instant_bpu
+.Woofaa/Medusa
+.woofaa/medusa
+.woofaa/pup's
+.Woofaa/PUP's fucked up shader
+.woofaa/pup's fucked up shader
+.Woofaa/TESS
+.woofaa/tess
+.Woofaa/Tessellation_Small
+.woofaa/tessellation_small
+/n3k0
+/n3ko
+/nek0
+/neko
+????????0????/???????/????
+AbDeveloper/SpaceEffect
+aidan/
+all4thlulz/
+all4thlulz/starnest (screen space)
+almgp/nuke
+asesampleshaders/tessellation
+atomic/
+Atomic/Atomic'sModifiedTakeYourTime
+atomic/atomic'smodifiedtakeyourtime
+Autist/GlitchScreen_v1
+basically private
+be careful
+Bender's Shaders/
+bender's shaders/
+Bender's Shaders/screen darken
+Bender's Shaders/Screen FX/Screen Glitch
+Bender's Shaders/Zoom
+bighurt
+BITCH
+Bkpjjj/
+bkpjjj/
+blackball
+bluescreen
+bongs/
+btd/dustfunhousev2
+bullyme
+butterfly
+C/zoom
+cake
+chenjd/forcefield
+Chromatic Aberration
+ChromaticAberration
+CJ6132/uuhhh
+cl4p/
+cl4pp
+cl4pp/
+clap
+clap/
+clapp
+clapp/
+CLAPPED
+clappped
+Classyham/Advanched Aberration
+Classyham/DistortionBubble
+Classyham/OverlayTS
+Classyham/ScreenFlip
+Clawbird01/
+Clawbird1/
+clyde
+clyde clapp
+cr4sh
+cr4sh3r
+cr4sher
+Crash
+crash
+Crash/
+crash/
+Crash/ShaderMa
+crash/shaderma
+crasher
+crasher shaders/
+Crasher Shaders/Medusa
+crasher shaders/medusa
+CubedParadox/Flat Lit Toon
+cull-behind 1
+Cunt
+custo5455245m
+custom/
+Custom/bluescreen
+custom/bluescreen
+Custom/Blur
+Custom/BOOMCRASH/Tessellation
+Custom/Crash
+Custom/Crashers/Standard
+custom/crashers/standard
+Custom/Custom
+custom/custom
+Custom/CustomShade
+Custom/DistortingGrabPass
+Custom/Gang
+custom/gang
+Custom/GPU
+Custom/GREY
+Custom/InvisibleMask
+Custom/Killer
+custom/killer
+custom/kys
+Custom/KYScotty
+custom/kyscotty
+custom/lag
+Custom/Magnification
+custom/magnification
+Custom/Matrix
+custom/matrix
+Custom/NameCover
+custom/nest
+Custom/Nig
+Custom/Nigger
+Custom/Niggr
+Custom/Oof
+custom/oof
+Custom/RGB
+Custom/Screen/Blur Shader
+Custom/Screen/Neon Shader
+Custom/Screenshake
+Custom/SpriteWaver
+custom/sprythu
+custom/standards
+Custom/Stencil/Mask
+custom/stencil/mask
+Custom/Stencil/Mask OneZLess
+custom/stencil/mask onezless
+Custom/Tes
+Custom/Tess
+Custom/Tessellation
+custom/yeet
+custom/yikes
+Custom/Zer0CustomsColorOverlay
+Custom/Zoom
+Custom/Zoomshader
+Custom/???? ???? ?????? ??? ?????\r\n
+Custom/??? ????? \r\n
+Custom/??? ?????? ??????\r\n
+Custom/??? ?? ????\r\n
+CustomDistanceFucked
+customdistancefucked
+CustomNastyOne
+customnastyone
+CustomNastyOne-1
+customnastyone-1
+CustomSuperSamp
+customsupersamp
+CustomYeet
+customyeet
+CustomYikes
+customyikes
+d1e nigg3r
+DBTC
+dbtc
+Decal/particle decal additive
+Demonia/Got Em
+Demonia/ScreenFucker
+Devil/PS4 SHIT
+devil/ps4 shit
+devil/ps4 shit"
+devildocmeedit/
+die
+die n1gg3r
+die n1gger
+die nigg3r
+diebitch
+dielol
+distancebase
+DistanceBased
+distancebased
+distancebasetesselationfuck
+distancebasetessfuck
+distancefuck
+distancefucked
+distancetess
+docballs/beeuwtiful
+docme/
+DocMe/Beautiful_V4.20.shader
+DocMe/ColorChanging
+DocMe/ShaderToy/Question of Time
+doppels shaders/
+Doppels shaders/MetallicFX v5.0
+Doppels shaders/MetallicFX v5.0MediumRender
+Doppels shaders/MetallicFX v5.0OverRender
+Doppels shaders/MetallicFXOverRenderByNath
+Doppels shaders/ScreenFX/Dope Shader SuckMyDickDoppel
+Drunk
+drunk
+du���
+ebola
+Effects/Explosions/Particles/Alpha Blended Light
+Effects/Explosions/Particles/GlowAdditive
+Eli/Tessellation
+eli/tessellation
+Espa�ol
+Espa�ol/
+f4gg0t
+f4ggot
+F A P O / FixedScreenShake
+faggot
+Fajny/Ekran
+fajny/ekran
+Fangs/Fucking Oof'd
+fangs/fucking oof'd
+Fapo's Cancer/
+flat lite toon
+fragment
+fragmentshader
+fruityfusion
+fruityfusion/
+FruityFusion/TunnelEditNath
+Fuck
+FUCKER
+Fullscreen
+Fur
+fur/
+fusionvfx
+fx/starnest
+Gametec/Gametec is retarded
+gametec/gametec is retarded
+GAPH Custom Shader/Integrated Particle/Integrated Particle (ValueControl)
+gay/
+get clapped
+get crashed
+get fucked
+getclapped
+getcrashed
+getfucked
+ggo login body
+glomee/
+go home
+god's children/holy water shader
+gohome
+Got Em
+got em
+GPU
+GPU/
+GPU_CRASH
+GPU_crash
+gpu_crash
+GPU_CRASH_1
+gpu_crash_1
+gr0axy/
+gr04xy/
+groaxy/
+G�wno/na/Sfere
+g�wno/na/sfere
+g??l??o??m??e??e??/
+hdjegbhuaj276312378632785678324547354t2egdy
+hello <3
+Herpu/
+herpu/
+Herpu/Chromatic Aberration
+Herpu/Screen Fuckery
+Herpu/Screendistortion
+Herpu/Screenshake and Blur(valueshift)(now featuring: cancer)
+Herpu/Zoom
+instant
+instant bpu only for nigs
+instant crash paralyzer
+instant yeeet
+izzy/
+Izzy/IzzuFrag
+izzy/izzufrag
+Izzy/IzzyCDF
+izzy/izzycdf
+Izzy/IzzyFrag
+izzy/izzyfrag
+Izzy/Zoom Shake
+izzycdf
+izzyfrag
+izzyrfc
+Jack/RQHoloSphere
+jack/rqholosphere
+Jucci/
+Khodrins Shaders/Hud Shaders/FPS Digital
+khodrins shaders/hud shaders/fps digital
+Kill
+kill
+kill you
+Killer
+Kinami/
+kk/Tesscrash
+kk/tesscrash
+knuckles_gang/free
+Knuckles_Gang/Free Crash
+knuckles_gang/free crash
+Kortana/_{CRASH}/Tessellated Ass
+kortana/_{crash}/tessellated ass
+kriptofx/
+KriptoFX/AIDS/DistortionParticles2
+KriptoFX/ME/Distortion
+KriptoFX/ME/DistortionMobile
+KriptoFX/RFX4/CutoutBorder
+KriptoFX/RFX4/Particle
+kyoukoz/
+KyoukoZ/HSL Additive
+kyran/
+kyran/e
+kyran/e  g  g    0 . 3
+Kyran/E G G 0 . 3
+kyran/egg
+KYSautismo�o�o
+kysautismo�o�o
+KYSautismo�o�o/
+KYScotty
+kyuzu
+Laptop's Tessellation Shader/
+leviant's shaders
+leviant's shaders/
+Leviant's Shaders/FreezeScreenTrueOne
+Leviant's Shaders/GrabScreenTrueOne
+Leviant's Shaders/UberShader v2.9
+lookslikeyouredead
+loops
+lorplefoncondominiumlistile14141414
+luka/
+Luka/MegaAE
+lukaae/
+lukame/
+MAG/Blackhole
+mag/blackhole
+MAG/Blackhole_GradientSmoothing
+mag/blackhole_gradientsmoothing
+Magic3000/RGB-Glitc
+Magic3000/RGB-Glitch
+Magic3000/ScreenSpace
+massive oof/nigga this shit hurt
+medusa
+medusa crasher
+Mega Screen Shader
+mel0n/Black & White
+Milky/
+Milky/Miku Shaders/HACCED
+Mochie/
+mochie/
+Mochie/Mochie's
+Moshiro/Crasher/Poop
+moshiro/crasher/poop
+myxelf/crashhehe
+myXelf/OpacityUV
+n1g
+n1gg
+n1gg3r
+n1gm0de
+N3k0Animati0nSqu4d/
+N3k0AnimationSquad/
+N4S/
+N45/
+NA5/
+Nabe
+Nabe/
+Nabe/Nabe
+Nabe/School Shooter
+nabe/school shooter
+NAS/
+Nath?/LeaveThis0.2
+Nath?/OurAmplify V0.2
+Nath?/Toon/Opaque
+Neen/
+Neitri/Clock V3
+neitri/clock v3
+NEK0/ Color Screen
+NEK0/ Dark Screen shader
+NEK0/AVA/Neko Costume v1
+NEK0/Screen/ Dark Screen shader v2
+NEK0/Screen/ grey scale v1
+NekoAnimationSquad/
+new material
+Nig
+nig
+nigg
+nigg3r
+NiggAthishurts
+niggathishurts
+NiggAthishurts/
+Nigger
+nigger
+Nigger/
+Nigger/NIGLET
+Nigger/WANK
+Nigger/WILLY
+Nigger/YEET
+niggie
+Niggr
+niggr
+nigm0d3
+nigmode
+nigr
+no sharing please
+no this is mine now
+No/blacks overrender
+no/blacks overrender
+Null's Shader/Trail Stencil
+odds/
+Okano/
+Okano/bLACK
+okbuddy
+omenous fixed shaders/
+Omenous/TEXTURE
+onion
+oofer
+Over 9000/Zer0Customs Super Rendered
+over render
+overrender
+P R X Z / TruePink
+P R X Z/TruePink
+particlecrash
+Particles/Alpha Blended Premultiply
+particles/nword
+ParticlesAdditive
+poiyomi/imeatingmymic
+poiyomi/unaffiliated
+Pretty
+pretty
+Private Shaders/fillSphere_red
+put to sleep
+QFX/ImagyVFX/Distortion/SimpleDistortion
+quantum/
+Quantum/Gems
+quantum/gems
+Quantum/MovingGems
+quantum/movinggems
+rampag3/
+rampag3/crashers/reaper
+randomname     1eg4ww
+redmage/cancerspace
+Retard
+retard
+Retrd
+retrd
+riot/
+Rollthered/Fire
+Rubba/Blotch
+rubba/blotch
+rx/crazy emission
+Sanity Gang
+sanity gang
+school shooter
+Screen Overlay
+Screen Overlay/
+Screenshake
+scruffy/
+sgfaerghehrthdhndjdfjsthfthfthrt48484543
+shader forge/
+shader forge/takeyourtimebox
+Shader Forge/takeyourtimebox - Cutout
+Shaderman/
+ShaderMan/Clip
+shaderman/planet shadertoy
+Shaderman/Simple Eye Blower
+shadertoy/
+ShadowSchoolBully
+shadowschoolbully
+ShadowSchoolBully/
+shinigami/
+Shinigxmi/Bine
+shinigxmi/bine
+silence i kill you
+silenceikillyou
+sine vfx/
+Sine VFX/StartSphereV4
+SirGastalot'sShader/ImageFlip
+Sleaze/texture mask v2
+sleep n1gg3r
+sleep nigg3r
+sleep nigger
+sleepn1gg3r
+sleepnigg3r
+sleepnigger
+SpaceEffect
+spaceeffect
+Sprythu/Why is my screen black
+sprythu/why is my screen black
+sstandard
+standard on cylnder
+Stonapse/
+Stonapse/Nerd Vaporizer
+stonapse/worldhit
+Stonapse/WorldKill
+stonapse/worldkill
+swisscheeseistasty99999999999/swisscheeseistasty99999999999
+t3ka/Zoooom
+Temmie/Basically Standard
+temmie/basically standard
+Temmie/Citizen Fade
+temmie/citizen fade
+Tera
+Tes
+Tess
+tess
+tesscrash
+tesselated
+tesselation
+tessellated
+Tessellation
+tessellation
+Tessellation/
+theone
+Thing/for overrender
+thing/for overrender
+thotdestroyer
+u go home
+uber shader v1.2
+UMBRELLA KILLER
+umbrella killer
+unaffiliated
+undertaker/will ban you
+undetected
+Unlit/FailShader
+unlit/failshader
+unlit/jumpscare
+Unlit/ScreenShake
+Vexon/ScreenSpace
+Video/RealtimeEmissiveGamma
+voidyShaders/cave
+VRChat/Panosphere3RENDER
+vrchat/panosphere3render
+VRCMods/Spooky
+vrcmods/spooky
+waifuserp
+whyyoubullyme
+Wiks/All in One
+Woofaa/
+Woofaa/AlphaBlended
+woofaa/alphablended
+Woofaa/Blackhole
+woofaa/blackhole
+Woofaa/Colours
+woofaa/colours
+Woofaa/Crash
+woofaa/crash
+Woofaa/Face Super Rendered
+woofaa/face super rendered
+worldclapp
+Worldfuck
+worldfuck
+worldfucked
+worldkill
+worldshit
+wybm
+wybm trippy
+xxx
+yikersdude
+youredead
+Zer0/
+zer0/
+Zer0/0 Shake for Wiks
+zer0/0 shake for wiks
+zer0/customparallax
+Zer0/Deepfry Meme
+Zer0/Fill Screen Distort
+Zer0/horror-distort
+Zer0/Tesselation
+Zer0/vaporwave
+zero/
+ZFS Shaders/ZFS_Flat_Free_Fog
+aseio1
