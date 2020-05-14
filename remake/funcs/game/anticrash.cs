@@ -21,6 +21,7 @@ using Il2CppSystem.Net.Security;
 using Il2CppMono.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
+using hashmod.remake.funcs.menu;
 
 namespace hashmod.remake.funcs.game
 {
@@ -114,7 +115,7 @@ namespace hashmod.remake.funcs.game
         }
         public static bool should_check_user(Player user)
         {
-            if (hashmod.anti_crasher_ignore_friends) if (user.get_api().isFriend) return false;
+            if (hashmod.anti_crasher_ignore_friends) if (utils.is_friend(user)) return false;
             try//yeah no one cares sdfjnjsdfjdsfjfnfsdn
             {
                 /*see if the user is even using fucking avatar that is loaded in*/
@@ -190,8 +191,7 @@ namespace hashmod.remake.funcs.game
         public static string[] shader_list;
         public static List<string> shader_list_local = new List<string>();
         public static bool shader_check(Player user)
-        {
-            if (user.get_api().id == APIUser.CurrentUser.id) return false;
+        {            
             var renderers = user.field_Private_VRCAvatarManager_0.GetComponentsInChildren<Renderer>(true);
             var default_shader = Shader.Find("Standard"); var did_change = false;
             for (var i = 0; i < renderers.Count; i++)
@@ -201,26 +201,7 @@ namespace hashmod.remake.funcs.game
                 for (var m = 0; m < obj.materials.Count; m++)
                 {
                     var mat = obj.materials[m];
-                    var should_normalize = false;
-                    if (hashmod.should_use_fetched_list)
-                    {
-                        foreach (var n in anticrash.shader_list)
-                        {
-                            if (mat.shader.name.Equals(n))
-                            {
-                                should_normalize = true;
-                                break;
-                            }
-                        }
-                    }
-                    foreach (var n in anticrash.shader_list_local)
-                    {
-                        if (mat.shader.name.Equals(n))
-                        {
-                            should_normalize = true;
-                            break;
-                        }
-                    }
+                    var should_normalize = shader_menu.is_known(mat.shader.name);
                     if (should_normalize == true)
                     {
                         UnityEngine.Object.Destroy(mat);
@@ -246,6 +227,7 @@ namespace hashmod.remake.funcs.game
                     user.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_0 == null ||
                     user.field_Internal_VRCPlayer_0 == null ||
                     user.field_Internal_VRCPlayer_0.prop_VRCAvatarManager_0 == null) continue;
+                if (user.get_api().id == APIUser.CurrentUser.id) continue;
                 if (should_check_user(user) == false) continue;
                 /*add the guy first before we die or smth*/
                 var data = user_by_id(user.field_Private_APIUser_0.id);
