@@ -44,6 +44,7 @@ using UnhollowerRuntimeLib;
 using UnityEngine.Events;
 using VRC.SDKBase;
 using VRCSDK2.Validation.Performance.Scanners;
+using Steamworks;
 
 namespace hashmod
 {
@@ -64,7 +65,7 @@ namespace hashmod
         public static Text slider_walkspeed_txt;
         public static float fov_cam = 60f;
         public static bool needs_update = false;
-        public static string mod_version = "26";
+        public static string mod_version = "28";
         public static bool fly_mode = false;
         public static bool clone_mode = true;
         public static bool delete_portals = false;
@@ -100,16 +101,17 @@ namespace hashmod
         public LayerMask collisionLayers = -1;
         public static UiAvatarList avatarslist;
         static float last_routine;
+        static float last_routine_5ps;
         public static avatar_ui_button fav_btn;
         public static avatar_ui fav_list = new avatar_ui();
         public static avatar_ui pub_list = new avatar_ui();
 
         public override void OnApplicationStart()
         {
-            anticrash.shader_list = new string[] { };
+            anticrash.shader_list = new string[] { }; shader_menu.set_canvas = null;
             var ini = new IniFile("hashcfg.ini");
             avatar_config.load(); avatar_config.avatar_list.Reverse(); ini.setup();
-            anticrash.shader_list_local = System.IO.File.ReadAllLines("hashmod_shaderlist.txt").ToList();
+            if (File.Exists("hashmod_shaderlist.txt")) anticrash.shader_list_local = System.IO.File.ReadAllLines("hashmod_shaderlist.txt").ToList();
             needs_update = utils.check_version();
         }
         public override void OnLevelWasLoaded(int level)
@@ -163,25 +165,39 @@ namespace hashmod
         public static void find_all_child_objects(GameObject obj)
         {
             MelonModLogger.Log(object_path(obj));
-            for (var i=0;i<obj.transform.childCount;i++)
+            for (var i = 0; i < obj.transform.childCount; i++)
             {
-                var child = obj.transform.GetChild(i);                
+                var child = obj.transform.GetChild(i);
                 find_all_child_objects(child.gameObject);
+            }
+        }
+        public static float last_friend_update = 0f;
+        public static List<string> friend_list = new List<string>();//for whatever reason il2cpp shit rapes performance so hard so this is a workaround for this
+        public static void update_friend_list()
+        {
+            if (Time.time > last_friend_update)
+            {
+                //update every 10 sec because fuck this?
+                last_friend_update = Time.time + 10;
+                friend_list.Clear();
+                for (var i=0;i<APIUser.CurrentUser.friendIDs.Count;i++)
+                {
+                    var id = APIUser.CurrentUser.friendIDs[i];
+                    friend_list.Add(id);
+                }
             }
         }
         public override void OnUpdate()
         {
             try
             {
+                //todo from yesterday make in vr shader lisrt follow the quickmenu transform pos & check why antispawnsound causes avatrs to dissapear
                 if (RoomManagerBase.prop_Boolean_3 == false) return;
                 menu.version_info();
-                if (anti_crasher_shader) shader_menu.work();
-                if (sub_menu_open) menu.menu_toggle_handler();
-                if (clone_mode) direct_clone.direct_menu_clone();
                 if (delete_portals) antiportal.auto_delete_portals();
                 if (isNoclip || fly_mode) flying.height_adjust();
                 if (anti_spawn_music) antispawn_sound.anti_spawn_sound();
-                if (Time.time > last_routine && utils.get_player_manager() != null)
+                if (Time.time > last_routine)
                 {
                     last_routine = Time.time + 1;
                     if (anti_crasher) anticrash.work();
@@ -190,9 +206,13 @@ namespace hashmod
                     if (esp_players) visuals.esp_player();
                     fov.set_cam_fov(fov_cam);
                     if (init_social_refresh == false) setup_refresh_button_social();
+                    update_friend_list();
+                    if (clone_mode) direct_clone.direct_menu_clone();                                    
                 }
+                if (sub_menu_open) menu.menu_toggle_handler();
+                if (anti_crasher_shader) shader_menu.work();
                 visuals.update_color();
-                if (rainbow_friend_nameborder) name_border_rbg.name_border_clr();
+                if (rainbow_friend_nameborder) name_border_rbg.name_border_clr();               
             }
             catch (Exception e)
             {
@@ -457,7 +477,7 @@ namespace hashmod
                         var obj = users[i];
                         if (obj == null) continue;
                         if (obj.field_Private_APIUser_0 == null) continue;
-                        if (obj.field_Private_APIUser_0.isFriend == false) continue;
+                        if (utils.is_friend(obj) == false) continue;
                         obj.field_Private_VRCPlayerApi_0.SetNamePlateColor(new Color(1f, 1f, 0f));
                     }
                 }));
@@ -525,7 +545,7 @@ namespace hashmod
                 }));
 
 
-                Application.targetFrameRate = 144;
+                Application.targetFrameRate = max_fps;
             }
         }
 
