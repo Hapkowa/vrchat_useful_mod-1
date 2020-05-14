@@ -68,3 +68,4 @@ Special thanks to;
 - @Dev
 - @Djdragon44 (Donation)
 - @Emilia (auto installer)
+- @404 [For the idea of fav+](https://github.com/l-404-l/AviFavPlus/)
