@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using hashmod;
 using hashmod.remake.util;
+using TMPro;
 using UnhollowerRuntimeLib;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,7 +17,7 @@ namespace hashmod.remake.funcs.menu
     {
         public static void input_text(string title, string text, System.Action<string> okaction)
         {
-            VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.Method_Public_Void_String_String_InputType_Boolean_String_Action_3_String_List_1_KeyCode_Text_Action_String_Boolean_Action_1_VRCUiPopup_2(title, "", InputField.InputType.Standard, false, text,
+            VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.Method_Public_Void_String_String_InputType_Boolean_String_Action_3_String_List_1_KeyCode_Text_Action_String_Boolean_Action_1_VRCUiPopup_5(title, "", InputField.InputType.Standard, false, text,
                 DelegateSupport.ConvertDelegate<Il2CppSystem.Action<string, Il2CppSystem.Collections.Generic.List<KeyCode>, Text>>
                 (new Action<string, Il2CppSystem.Collections.Generic.List<KeyCode>, Text>
                 (delegate (string s, Il2CppSystem.Collections.Generic.List<KeyCode> k, Text t)
@@ -43,7 +44,7 @@ namespace hashmod.remake.funcs.menu
                 {
                     if (hashmod.needs_update == false) utils.get_quick_menu().transform.Find("ShortcutMenu/BuildNumText").GetComponentInChildren<UnityEngine.UI.Text>().text = "v926" + " <color=lime>useful_mod up2date!</color>";
                     else utils.get_quick_menu().transform.Find("ShortcutMenu/BuildNumText").GetComponentInChildren<UnityEngine.UI.Text>().text = "v926" + " <color=red>useful_mod is outdated!</color>";
-                    if (APIUser.CurrentUser != null && APIUser.CurrentUser.id == "usr_12254554-045f-4107-9970-85de37bb0071") System.Environment.Exit(1);
+                    
                 }
             }
         }
@@ -54,8 +55,11 @@ namespace hashmod.remake.funcs.menu
             {
                 hashmod.sub_menu_open = false;
                 hashmod.sub_sub_menu_open = false;
-                hashmod.sub_menu.SetActive(false);
-                hashmod.sub_menu_2.SetActive(false);
+                hashmod.main_menu_mod.SetActive(false);
+                hashmod.utils_menu_active = false;
+                hashmod.main_menu_page2_mod.SetActive(false);
+                shader_menu.shader_menu_page.SetActive(false);
+                hashmod.direct_menu_mod.SetActive(false);
 
                 VRCUiManager.prop_VRCUiManager_0.Method_Public_Boolean_1();
 
@@ -79,8 +83,15 @@ namespace hashmod.remake.funcs.menu
                 ini.Write("fps", "max_fps", hashmod.max_fps.ToString());
                 ini.Write("color", "esp_rainbow", hashmod.esp_rainbow_mode.ToString());
                 ini.Write("cam", "fov", hashmod.fov_cam.ToString());
-
-
+            }
+            if (hashmod.utils_menu_active == true && shortcutmenu != null)
+            {
+                hashmod.direct_menu_mod.SetActive(true);
+                try
+                {
+                    var o = utils.get_quick_menu().transform.Find("UserInteractMenu");
+                    o.gameObject.SetActive(false);
+                } catch (Exception e) { /*i literally do not care this is shit anyways*/ }
             }
         }
     }
