@@ -1,4 +1,4 @@
-﻿using Harmony;
+using Harmony;
 using MelonLoader;
 using System;
 using System.Collections.Generic;
@@ -14,8 +14,9 @@ using VRC;
 using Il2CppSystem.IO;
 using VRC.Core;
 using Transmtn;
-
-//  todo note to optional fetch list and remove self from filtering shaders
+using hashmod.remake.btn;
+using UnityEngine.EventSystems;
+using Il2CppSystem.Threading;
 
 namespace hashmod.remake.funcs.menu
 {
@@ -28,20 +29,26 @@ namespace hashmod.remake.funcs.menu
         private static bool did_setup_button = false;
         public static Button next_page_button;
         public static int current_selected_page = 0;
+        public static Canvas set_canvas = null;
+        public static CanvasScaler set_canvas_scaler;
+        public static GraphicRaycaster set_graphicsray;
+        public static VRCSDK2.VRC_UiShape set_uishape;
+        public static bool canvas_setup = false;
+        public static GameObject shader_menu_page = null;
         public static bool is_known(string shader)
         {
             if (hashmod.should_use_fetched_list == true) if (anticrash.shader_list.Contains(shader)) return true;
-            if (anticrash.shader_list_local.Contains(shader)) return true;            
+            if (anticrash.shader_list_local.Contains(shader)) return true;
             return false;
         }
         public static bool is_playing(string shader)
         {
             var active_renderers = set_player.GetComponentsInChildren<Renderer>(false);
-            for (var i=0;i<active_renderers.Count;i++)
+            for (var i = 0; i < active_renderers.Count; i++)
             {
                 var obj = active_renderers[i];
                 if (obj == null) continue;
-                for(var c=0;c<obj.materials.Count;c++)
+                for (var c = 0; c < obj.materials.Count; c++)
                 {
                     var jbo = obj.materials[c];
                     if (jbo == null) continue;
@@ -52,28 +59,26 @@ namespace hashmod.remake.funcs.menu
         }
         static public void set_page(int page)
         {
-            var startpos = -300;
-            var asdasd = GameObject.Find("Screens");
+            var startpos = 100;
 
             foreach (var obj in list_objects) UnityEngine.Object.Destroy(obj);
             list_objects.Clear();
             foreach (var obj in pages[page])
             {
-                startpos = page_display_routine(startpos, asdasd, obj);
+                startpos = page_display_routine(startpos, shader_menu_page, obj);
             }
             next_page_button.enabled = true;
         }
         static public void go_next_page()
         {
-            /*loop back to start if we are the end it doesnt even matter*/
+            /*loop back to start if we are the end it doesnt even matter*/            
             current_selected_page++; if (current_selected_page > pages.Count - 1) current_selected_page = 0;
             set_page(current_selected_page);
         }
         static public bool setup_listing()
         {
             var renderers = set_player.prop_VRCAvatarManager_0.GetComponentsInChildren<Renderer>(true);
-            var startpos = -300;
-            var asdasd = GameObject.Find("Screens");
+            var startpos = 0;
 
             for (var i = 0; i < renderers.Count; i++)
             {
@@ -87,7 +92,7 @@ namespace hashmod.remake.funcs.menu
                         bool contained = false;
                         foreach (var a in pages) if (a.Contains(mat.shader.name)) { contained = true; break; }
                         if (contained == true) continue;
-                        if (tmp_list.Count == 9)
+                        if (tmp_list.Count == 12)
                         {
                             //split to a new page
                             pages.Add(tmp_list);
@@ -104,41 +109,31 @@ namespace hashmod.remake.funcs.menu
                 pages.Add(tmp_list);
                 tmp_list = new List<string>();
             }
-            MelonModLogger.Log("created pages " + pages.Count());
+            //MelonModLogger.Log("created pages " + pages.Count());
             foreach (var obj in pages.First())
             {
-                startpos = page_display_routine(startpos, asdasd, obj);
+                startpos = page_display_routine(startpos, shader_menu_page, obj);
             }
+
             next_page_button.gameObject.SetActive(true);
             next_page_button.enabled = true;
+
             return true;
         }
 
         private static int page_display_routine(int startpos, GameObject asdasd, string obj)
         {
-            var txt = new GameObject("TextListing");
-            txt.transform.SetParent(asdasd.transform, false);
+            var txt = new GameObject("Text"); txt.transform.SetParent(asdasd.transform, false);
 
-            txt.layer = 1;
+            var trigger = txt.AddComponent<EventTrigger>();
+            EventTrigger.Entry entry = new EventTrigger.Entry();
+            entry.eventID = EventTriggerType.PointerDown;
             txt.AddComponent<RectTransform>();
-
-            var txt_component = txt.AddComponent<Button>();
-            txt_component.gameObject.AddComponent<Text>();
-
-            var text_part = txt_component.GetComponent<Text>(); text_part.transform.SetParent(asdasd.transform, false);
-            text_part.font = Resources.GetBuiltinResource<Font>("Arial.ttf"); text_part.fontSize = 42; text_part.text = obj;
-            text_part.transform.localPosition = txt.transform.localPosition; text_part.transform.localPosition += new Vector3(0, 600, 0);
-            text_part.transform.localPosition += new Vector3((text_part.text.Count() * 42) / 4, startpos, 0);
-            text_part.transform.localRotation = asdasd.transform.localRotation;
-            text_part.enabled = true;
-            if (is_known(obj)) text_part.color = Color.red;
-            else if (is_playing(obj)) text_part.color = Color.green;
-            text_part.GetComponent<RectTransform>().sizeDelta = new Vector2(text_part.text.Count() * 42, 50);
-            txt_component.GetComponent<RectTransform>().sizeDelta = new Vector2(text_part.text.Count() * 42, 50);
-            txt_component.onClick.AddListener(new Action(() =>
+            trigger.GetComponent<RectTransform>().sizeDelta = new Vector2(350, 100);
+            entry.callback.AddListener(new Action<BaseEventData>((d) =>
             {
-                var self = txt_component.GetComponent<Text>();
-                MelonModLogger.Log("has clicked object \"" + self.text + "\"");
+                var self = txt.GetComponentInChildren<Text>();
+                //MelonModLogger.Log("has clicked object \"" + self.text + "\"");
                 if (anticrash.shader_list_local.Contains(self.text) == false)
                 {
                     anticrash.shader_list_local.Add(self.text);
@@ -155,12 +150,24 @@ namespace hashmod.remake.funcs.menu
                     //MelonModLogger.Log("removing shader from local blacklist \"" + self.text + "\"");
                 }
             }));
+            trigger.triggers.Add(entry);
 
-            txt.GetComponent<RectTransform>().sizeDelta = new Vector2(text_part.text.Count() * 42, 50);
+            var txt_component = txt.AddComponent<Text>();
+            txt_component.font = Resources.GetBuiltinResource<Font>("Arial.ttf"); txt_component.fontSize = 64; txt_component.text = obj;
+            txt_component.transform.localPosition = txt.transform.localPosition;
+            txt_component.transform.localPosition += new Vector3(0, 800, 0);
+            txt_component.transform.localPosition -= new Vector3(0, startpos, 0);
+            txt_component.transform.localPosition += new Vector3(txt_component.fontSize * obj.Count() / 5, 75);
+            txt_component.enabled = true;
+            txt_component.GetComponent<RectTransform>().sizeDelta = new Vector2(txt_component.fontSize * obj.Count(), 100);
+            txt_component.alignment = TextAnchor.MiddleLeft;
+
+            if (is_known(obj)) txt_component.color = Color.red;
+            else if (is_playing(obj)) txt_component.color = Color.green;
 
             list_objects.Add(txt);
-
-            startpos -= 50;
+  
+            startpos += 100;
             return startpos;
         }
 
@@ -174,9 +181,11 @@ namespace hashmod.remake.funcs.menu
             next_page_button.gameObject.SetActive(false);
             if (list_objects.Count != 0) foreach (var o in list_objects) UnityEngine.Object.Destroy(o);
         }
+        static public bool open_menu = false;
         static private bool setup_back_button()
         {
-            var base_object = GameObject.Find("UserInterface/QuickMenu");
+            shader_menu_page = menu.make_blank_page("shaderstuff");
+
             var page_up_btn = GameObject.Find("UserInterface/QuickMenu/EmojiMenu/PageUp");
             var clone_page_btn = UnityEngine.Object.Instantiate<GameObject>(page_up_btn.gameObject);
 
@@ -184,44 +193,62 @@ namespace hashmod.remake.funcs.menu
             btn_object.onClick = new Button.ButtonClickedEvent();
             btn_object.onClick.AddListener(new Action(() => { go_next_page(); }));
 
-            btn_object.transform.localPosition -= new Vector3(50, 200);
-            btn_object.transform.localRotation = base_object.transform.localRotation;
-            var parent = GameObject.Find("Screens");
+            btn_object.transform.localRotation = shader_menu_page.transform.localRotation;
+            btn_object.transform.localPosition += new Vector3(500,0,0);
 
             next_page_button = btn_object;
 
             btn_object.enabled = false;
-            btn_object.transform.SetParent(parent.transform, false);
+            btn_object.transform.SetParent(shader_menu_page.transform, false);
             did_setup_button = true;
             next_page_button.gameObject.SetActive(false);
 
-            parent.AddComponent<Canvas>();
-            parent.GetComponent<Canvas>().renderMode = RenderMode.WorldSpace;
-            parent.AddComponent<CanvasScaler>();
-            parent.AddComponent<GraphicRaycaster>();
-            parent.AddComponent<VRCSDK2.VRC_UiShape>();
+            var open_menu_toggle = btn_utils.create_btn(false, ButtonType.Default, "Show shader menu", "Shows the shader menu to blacklist shaders, green=running shader / red=will be blocked / white=not running", Color.white, Color.red, -2, 0, utils.get_quick_menu().transform.Find("UserInteractMenu"),
+            new Action(() =>
+            {
+                if (hashmod.anti_crasher_shader == false)
+                {
+                    hashmod.error_type_poput("Feature missing!", "Enable anti-shader to make this feature work!");
+                    return;
+                }
+                var bg = utils.get_quick_menu().transform.Find("UserInteractMenu");
+                bg.gameObject.SetActive(false);
+                shader_menu_page.SetActive(true);
+                open_menu = true;
+            }),
+            new Action(() =>
+            {
+
+            }));
 
             return true;
         }
         static public void work()
         {
+            if (hashmod.anti_crasher_shader == false) return;
             if (did_setup_button == false) setup_back_button();
             var cur_player = utils.get_quick_menu().get_selected_player();
-            if (APIUser.CurrentUser == null || cur_player == null || cur_player.field_Private_APIUser_0 == null) return;
-            if ((cur_player == null && set_player != null) || (APIUser.CurrentUser.id == cur_player.field_Private_APIUser_0.id && set_player != null))
+            if (APIUser.CurrentUser == null) return;
+            if (cur_player == null && set_player != null)
             {
-                MelonModLogger.Log("unselected player, clearing listing");
                 reset_all();
+                open_menu = false;
+                shader_menu_page.SetActive(false);
                 return;
             }
             if (set_player != cur_player && APIUser.CurrentUser.id != cur_player.field_Private_APIUser_0.id)
             {
                 /*clear and swap shader list*/
-                MelonModLogger.Log("setting new player shader data");
                 reset_all();
                 set_player = cur_player; /*setup the next player*/
                 setup_listing();
                 set_page(0);
+            }
+            if (cur_player == set_player && open_menu == true) //while we at it keep forcing out menu
+            {
+                var bg = utils.get_quick_menu().transform.Find("UserInteractMenu");
+                bg.gameObject.SetActive(false);
+                shader_menu_page.SetActive(true);
             }
         }
     }
