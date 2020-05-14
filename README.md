@@ -49,10 +49,10 @@ Please make sure to install the managed folder correctly! (Oculus client is not 
 
 ![Example social page](https://i.imgur.com/xcCr993.png)
 ![Example in-game menu](https://i.imgur.com/uO98ilz.png) 
-![Example in-game menu p2](https://i.imgur.com/vvcZZLu.png)
+![Example in-game menu p2](https://i.imgur.com/Vdfwmfn.png)
 ![Example fav+](https://i.imgur.com/xWE8nmj.jpg)
 ![Example in-game menu button](https://i.imgur.com/NlolOFk.png)
-![Example in-game direct menu](https://i.imgur.com/awLqeFL.png)
+![Example in-game direct menu](https://i.imgur.com/b1ULC29.png)
 
 Disclaimer:
 This is not a official modification for VRChat and is not approved by any means.
