@@ -277,3 +277,53 @@ Temmie/Citizen Fade
 Sprythu/Why is my screen black
 Devil/PS4 SHIT
 Null's Shader/Trail Stencil
+NEK0/ Dark Screen shader
+DocMe/ColorChanging
+Magic3000/RGB-Glitc
+753/Additive overlay
+Effects/Explosions/Particles/Alpha Blended Light
+Effects/Explosions/Particles/GlowAdditive
+NEK0/AVA/Neko Costume v1
+Doppels shaders/MetallicFX v5.0
+Rollthered/Fire
+GAPH Custom Shader/Integrated Particle/Integrated Particle (ValueControl)
+.Star/Bacon
+Nath✮/LeaveThis0.2
+Doppels shaders/MetallicFX v5.0MediumRender
+Nath✮/OurAmplify V0.2
+Luka/MegaAE
+Nath✮/Toon/Opaque
+NEK0/ Color Screen 
+Doppels shaders/ScreenFX/Dope Shader SuckMyDickDoppel
+Omenous/TEXTURE
+Doppels shaders/MetallicFXOverRenderByNath
+DocMe/ShaderToy/Question of Time
+DocMe/Beautiful_V4.20.shader
+Doppels shaders/MetallicFX v5.0OverRender
+Leviant's Shaders/FreezeScreenTrueOne
+Leviant's Shaders/GrabScreenTrueOne
+myXelf/OpacityUV
+KyoukoZ/HSL Additive
+Leviant's Shaders/UberShader v2.9
+FruityFusion/TunnelEditNath
+Bender's Shaders/Screen FX/Screen Glitch
+.SENDO/Toon/Test SendoLS Toon Beta V1.1
+Sine VFX/StartSphereV4
+Video/RealtimeEmissiveGamma
+Custom/Screen/Neon Shader
+Magic3000/ScreenSpace
+Custom/Screen/Blur Shader
+Particles/Alpha Blended Premultiply
+Mega Screen Shader
+Magic3000/RGB-Glitch
+Izzy/Zoom Shake
+Classyham/DistortionBubble
+Vexon/ScreenSpace
+80s Movie
+NEK0/Screen/ grey scale v1
+KriptoFX/RFX4/CutoutBorder
+NEK0/Screen/ Dark Screen shader v2
+KriptoFX/ME/Distortion
+KriptoFX/ME/DistortionMobile
+KriptoFX/RFX4/Particle
+Decal/particle decal additive
