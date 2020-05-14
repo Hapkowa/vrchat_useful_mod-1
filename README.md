@@ -68,4 +68,4 @@ Special thanks to;
 - @Dev
 - @Djdragon44 (Donation)
 - @Emilia (auto installer)
-- @404 [For the idea of fav+](https://github.com/l-404-l/AviFavPlus/)
+- @404 [For the idea of fav+](https://github.com/l-404-l/AviFavPlus/) [Which is licensed under Apache-2.0](https://github.com/kichiro1337/vrchat_useful_mod/blob/master/LICENSE-404-l)
