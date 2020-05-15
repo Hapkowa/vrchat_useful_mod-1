@@ -33,6 +33,7 @@ If you want to stay up to date join the discord server! [Click to join the updat
 - Social refresh button to update friends online/offline
 - Rainbow name borders for friends in your lobby
 - Anti-Shader with custom local block list and server-fetched blacklist with ability to disable fetched list use
+- Ability to send custom invite texts to friends outside and inside of your instance
 
 
 Please make sure to install the managed folder correctly! (Oculus client is not supported)
