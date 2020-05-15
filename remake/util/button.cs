@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,8 +7,10 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
-using TestMod.remake.util;
-namespace TestMod.remake.btn
+using hashmod.remake.util;
+using MelonLoader;
+
+namespace hashmod.remake.btn
 {
     public enum ButtonType
     {
@@ -59,7 +61,7 @@ namespace TestMod.remake.btn
 
             return "block";
         }
-        public static GameObject create_btn(bool toggle_state, ButtonType type, string text, string tooltip, Color textColor, Color backgroundColor, float x_pos, float y_pos, Transform parent, Action listener, Action SecondListener = null)
+        public static GameObject create_btn(bool toggle_state, ButtonType type, string text, string tooltip, Color textColor, Color backgroundColor, float x_pos, float y_pos, Transform parent, Action listener, Action SecondListener = null, int should_half = 0)
         {
             Transform transform = instantiate(type.to_type());
             var quickMenu = utils.get_quick_menu();
@@ -69,7 +71,7 @@ namespace TestMod.remake.btn
 
             transform.localPosition = new Vector3(transform.localPosition.x + num * x_pos, transform.localPosition.y + num2 * y_pos, transform.localPosition.z);
 
-            transform.SetParent(parent, false);
+            transform.SetParent(parent, false);            
 
             switch (type)
             {
@@ -125,6 +127,18 @@ namespace TestMod.remake.btn
                     transform.GetComponentInChildren<UiTooltip>().text = tooltip;
                     transform.GetComponentInChildren<Text>().color = textColor;
                     transform.GetComponentInChildren<Image>().color = backgroundColor;
+
+                    if (should_half == 1)
+                    {
+                        transform.localPosition += new Vector3(0, transform.GetComponent<RectTransform>().sizeDelta.y / 6, 0);
+                        transform.GetComponent<RectTransform>().sizeDelta = new Vector2(transform.GetComponent<RectTransform>().sizeDelta.x, transform.GetComponent<RectTransform>().sizeDelta.y / 2);
+                    }
+                    else if (should_half == 2)
+                    {
+                        transform.localPosition += new Vector3(0, transform.GetComponent<RectTransform>().sizeDelta.y / 5, 0);
+                        transform.localPosition -= new Vector3(0, transform.GetComponent<RectTransform>().sizeDelta.y / 2, 0);
+                        transform.GetComponent<RectTransform>().sizeDelta = new Vector2(transform.GetComponent<RectTransform>().sizeDelta.x, transform.GetComponent<RectTransform>().sizeDelta.y / 2);
+                    }
 
                     transform.GetComponent<Button>().onClick = new Button.ButtonClickedEvent();
                     transform.GetComponent<Button>().onClick.AddListener(listener);
