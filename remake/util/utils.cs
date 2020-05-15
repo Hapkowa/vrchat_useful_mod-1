@@ -18,13 +18,22 @@ using MelonLoader;
 using UnhollowerRuntimeLib;
 using UnityEngine.Events;
 using UnityEngine.UI;
-using TestMod.remake.btn;
+using hashmod.remake.btn;
 using OVR.OpenVR;
+using System.Net.Cache;
+using Transmtn.DTO.Notifications;
+using Transmtn.DTO;
 
-namespace TestMod.remake.util
+namespace hashmod.remake.util
 {
     public static class utils
     {
+        public static bool send_message(string msg, string id)
+        {
+            if (VRCWebSocketsManager.field_Private_Static_VRCWebSocketsManager_0 == null || VRCWebSocketsManager.field_Private_Static_VRCWebSocketsManager_0.field_Private_Api_0 == null) return false;
+            VRCWebSocketsManager.field_Private_Static_VRCWebSocketsManager_0.field_Private_Api_0.PostOffice.Send(Invite.Create(id, "", new Location("", new Transmtn.DTO.Instance("", id, "", "", "", false)), msg));
+            return true;
+        }
         public static string convert(WebResponse res)
         {
             string strResponse = "";
@@ -33,9 +42,17 @@ namespace TestMod.remake.util
             res.Dispose();
             return strResponse;
         }
-        public static bool check_version()
+        public static string[] to_array(WebResponse res)
+        {
+            var str = convert(res);
+            string[] strarr = str.Split(Environment.NewLine.ToCharArray());
+            return strarr;
+        }
+        public static int check_version()
         {
             var client = WebRequest.Create("https://raw.githubusercontent.com/kichiro1337/vrchat_useful_mod/master/version.txt");
+            HttpRequestCachePolicy noCachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.NoCacheNoStore);
+            client.CachePolicy = noCachePolicy;
 
             ServicePointManager.ServerCertificateValidationCallback = (System.Object s, X509Certificate c, X509Chain cc, SslPolicyErrors ssl) => true;
 
@@ -45,13 +62,26 @@ namespace TestMod.remake.util
                 MelonModLogger.Log("!!! There was a update for this mod !!!");
                 MelonModLogger.Log("!!! Please update the mod to enjoy new features and bug fixes !!!");
                 MelonModLogger.Log("https://github.com/kichiro1337/vrchat_useful_mod");
-                return true;
+                return int.Parse(response);
             }
             else
             {
                 MelonModLogger.Log("Mod is up to date!");
-                return false;
+                return int.Parse(response);
             }
+        }
+        public static string[] get_shader_blacklist()
+        {
+            var client = WebRequest.Create("https://raw.githubusercontent.com/kichiro1337/vrchat_useful_mod/master/blacklist-shaders.txt");
+            HttpRequestCachePolicy noCachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.NoCacheNoStore);
+            client.CachePolicy = noCachePolicy;
+
+            ServicePointManager.ServerCertificateValidationCallback = (System.Object s, X509Certificate c, X509Chain cc, SslPolicyErrors ssl) => true;
+
+            var response = to_array(client.GetResponse());
+            response = response.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+
+            return response;
         }
         public static VRCPlayer get_local()
         {
@@ -61,6 +91,11 @@ namespace TestMod.remake.util
         {
             if (PlayerManager.field_Private_Static_PlayerManager_0 == null) return null;
             return PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0;
+        }
+        public static bool is_friend(Player p)
+        {
+            if (hashmod.friend_list.Contains(p.field_Private_APIUser_0.id)) return true;
+            return false;
         }
         public static APIUser get_api(this Player p)
         {
