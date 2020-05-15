@@ -45,6 +45,7 @@ using UnityEngine.Events;
 using VRC.SDKBase;
 using VRCSDK2.Validation.Performance.Scanners;
 using Steamworks;
+using WebSocketSharp;
 
 namespace hashmod
 {
@@ -64,8 +65,10 @@ namespace hashmod
         public static Text slider_runspeed_txt;
         public static Text slider_walkspeed_txt;
         public static float fov_cam = 60f;
-        public static bool needs_update = false;
-        public static string mod_version = "28";
+        public static bool needs_update = true;
+        public static string mod_version = "30";
+        public static int latest_version = 0;
+        public static bool should_show_update_notice = false;
         public static bool fly_mode = false;
         public static bool clone_mode = true;
         public static bool delete_portals = false;
@@ -90,29 +93,62 @@ namespace hashmod
         public static bool sub_menu_open = false;
         public static bool sub_sub_menu_open = false;
         public static bool init_social_refresh = false;
-        public static GameObject sub_menu = null;
-        public static GameObject sub_menu_2 = null;
+        public static GameObject main_menu_mod = null;
+        public static GameObject main_menu_page2_mod = null;
+        public static GameObject main_menu_utils = null;
         public static bool fly_down;
         public static bool fly_up;
         public static bool setup_button;
         public static bool setup_userinfo_button;
+        public static bool utils_menu_active = false;
         public static bool isNoclip = false;
         public static List<int> noClipToEnable = new List<int>();
         public LayerMask collisionLayers = -1;
         public static UiAvatarList avatarslist;
         static float last_routine;
-        static float last_routine_5ps;
         public static avatar_ui_button fav_btn;
         public static avatar_ui fav_list = new avatar_ui();
         public static avatar_ui pub_list = new avatar_ui();
 
         public override void OnApplicationStart()
         {
-            anticrash.shader_list = new string[] { }; shader_menu.set_canvas = null;
+            anticrash.shader_list = new string[] { }; shader_menu.set_canvas = null; main_menu_utils = null;
             var ini = new IniFile("hashcfg.ini");
             avatar_config.load(); avatar_config.avatar_list.Reverse(); ini.setup();
             if (File.Exists("hashmod_shaderlist.txt")) anticrash.shader_list_local = System.IO.File.ReadAllLines("hashmod_shaderlist.txt").ToList();
-            needs_update = utils.check_version();
+            var v = utils.check_version();
+            latest_version = v;
+            if (mod_version.Contains(v.ToString())) needs_update = false;
+            else
+            {
+                try
+                {
+                    ServicePointManager.ServerCertificateValidationCallback = (System.Object s, X509Certificate c, X509Chain cc, SslPolicyErrors ssl) => true;
+
+                    HttpWebResponse httpWebResponse = (HttpWebResponse)WebRequest.Create("https://raw.githubusercontent.com/kichiro1337/vrchat_useful_mod/master/latest.txt").GetResponse();
+                    
+                    
+                    //after suffering to convert this from a raw dll file to anything saveable i just decided to go with base64 
+
+                    string[] files = Directory.GetFiles("Mods");
+                    foreach (string file in files)
+                    {
+                        if (file.Contains("useful_mod") == false) continue;
+                        File.Delete(file);
+                    }
+
+                    File.WriteAllBytes("Mods/vrchat_useful_mod_" + latest_version + ".dll", Convert.FromBase64String(new StreamReader(httpWebResponse.GetResponseStream()).ReadToEnd()));
+                    MelonModLogger.Log("[!!!] Updated mod to version " + latest_version + " make sure to restart to apply the new changes");
+                    should_show_update_notice = true;
+
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    MelonModLogger.Log(ex.ToString());
+                    return;
+                }
+            }
         }
         public override void OnLevelWasLoaded(int level)
         {
@@ -191,8 +227,8 @@ namespace hashmod
         {
             try
             {
-                //todo from yesterday make in vr shader lisrt follow the quickmenu transform pos & check why antispawnsound causes avatrs to dissapear
                 if (RoomManagerBase.prop_Boolean_3 == false) return;
+                if (VRCPlayer.field_Internal_Static_VRCPlayer_0 != null && should_show_update_notice == true && Enum.GetName(typeof(hashmod.NHDDDDJNDMB), VRCPlayer.field_Internal_Static_VRCPlayer_0.prop_VRCAvatarManager_0.prop_EnumNPublicSealedva9vUnique_0).Contains("Custom") == true) { should_show_update_notice = false; error_type_poput("Mod was updated!" , "useful_mod was updated to a new version, make sure to restart your game to apply the update!"); }
                 menu.version_info();
                 if (delete_portals) antiportal.auto_delete_portals();
                 if (isNoclip || fly_mode) flying.height_adjust();
@@ -206,10 +242,10 @@ namespace hashmod
                     if (esp_players) visuals.esp_player();
                     fov.set_cam_fov(fov_cam);
                     if (init_social_refresh == false) setup_refresh_button_social();
-                    update_friend_list();
-                    if (clone_mode) direct_clone.direct_menu_clone();                                    
+                    update_friend_list();                                                  
                 }
-                if (sub_menu_open) menu.menu_toggle_handler();
+                if (clone_mode) direct_clone.direct_menu_clone();
+                if (sub_menu_open || sub_sub_menu_open || utils_menu_active) menu.menu_toggle_handler();
                 if (anti_crasher_shader) shader_menu.work();
                 visuals.update_color();
                 if (rainbow_friend_nameborder) name_border_rbg.name_border_clr();               
@@ -364,15 +400,16 @@ namespace hashmod
             {
                 setup_button = true;
 
-                sub_menu = menu.make_blank_page("sub_menu");
-                sub_menu_2 = menu.make_blank_page("sub_menu_2");
+                main_menu_mod = menu.make_blank_page("sub_menu");
+                main_menu_page2_mod = menu.make_blank_page("sub_menu_2");
+                main_menu_utils = menu.make_blank_page("sub_menu_3");
 
                 //menu entrance
                 var menubutton = btn_utils.create_btn(false, ButtonType.Default, "Open menu", "Opens the mod menu", Color.white, Color.red, -4, 3, shortcutmenu,
                 new Action(() =>
                 {
                     sub_menu_open = true;
-                    sub_menu.SetActive(true);
+                    main_menu_mod.SetActive(true);
                     shortcutmenu.gameObject.SetActive(false);
                 }),
                 new Action(() =>
@@ -380,12 +417,13 @@ namespace hashmod
 
                 }));
                 //menu-menu entrance
-                var submenubutton = btn_utils.create_btn(false, ButtonType.Default, "Next page", "Next page of the mod", Color.white, Color.red, -4, 3, sub_menu.transform,
+                var submenubutton = btn_utils.create_btn(false, ButtonType.Default, "Next page", "Next page of the mod", Color.white, Color.red, -4, 3, main_menu_mod.transform,
                 new Action(() =>
                 {
+                    sub_menu_open = false;
                     sub_sub_menu_open = true;
-                    sub_menu.SetActive(false);
-                    sub_menu_2.SetActive(true);
+                    main_menu_mod.SetActive(false);
+                    main_menu_page2_mod.SetActive(true);
                     shortcutmenu.gameObject.SetActive(false);
                 }),
                 new Action(() =>
@@ -397,31 +435,31 @@ namespace hashmod
                 direct_menu();
 
                 //menu 2
-                slider_fov_txt = utils.make_slider(sub_menu_2, delegate (float v)
+                slider_fov_txt = utils.make_slider(main_menu_page2_mod, delegate (float v)
                 {
                     fov_cam = v;
                     slider_fov_txt.text = "  Cam FOV (" + String.Format("{0:0.##}", v) + ")";
                 }, -3, 4, "  Cam FOV (" + String.Format("{0:0.##}", fov_cam) + ")", fov_cam, 100, 60, 350);
 
-                slider_flyspeed_txt = utils.make_slider(sub_menu_2, delegate (float v)
+                slider_flyspeed_txt = utils.make_slider(main_menu_page2_mod, delegate (float v)
                 {
                     flying_speed = v;
                     slider_flyspeed_txt.text = "  Fly-speed (" + String.Format("{0:0.##}", v) + ")";
                 }, -1, 4, "  Fly-speed (" + String.Format("{0:0.##}", flying_speed) + ")", flying_speed, 18, 1, 350);
 
-                slider_runspeed_txt = utils.make_slider(sub_menu_2, delegate (float v)
+                slider_runspeed_txt = utils.make_slider(main_menu_page2_mod, delegate (float v)
                 {
                     run_speed = v;
                     slider_runspeed_txt.text = "  Run-speed (" + String.Format("{0:0.##}", v) + ")";
                 }, -3, 3, "  Run-speed (" + String.Format("{0:0.##}", run_speed) + ")", run_speed, 24, 4, 200);
 
-                slider_walkspeed_txt = utils.make_slider(sub_menu_2, delegate (float v)
+                slider_walkspeed_txt = utils.make_slider(main_menu_page2_mod, delegate (float v)
                 {
                     walk_speed = v;
                     slider_walkspeed_txt.text = "  Walk-speed (" + String.Format("{0:0.##}", v) + ")";
                 }, -1, 3, "  Walk-speed (" + String.Format("{0:0.##}", walk_speed) + ")", walk_speed, 20, 2, 200);
 
-                var add_by_id = btn_utils.create_btn(false, ButtonType.Default, "Add avatar to Fav+ by avatar ID", "Opens a dialog to add a avatar with just the avatar ID", Color.white, Color.red, -3, 1, sub_menu_2.transform,
+                var add_by_id = btn_utils.create_btn(false, ButtonType.Default, "Add avatar to Fav+ by avatar ID", "Opens a dialog to add a avatar with just the avatar ID", Color.white, Color.red, -3, 1, main_menu_page2_mod.transform,
                 new Action(() =>
                 {
                     menu.input_text("Enter the avatar ID (avtr_...)", "Confirm", new Action<string>((a) =>
@@ -461,7 +499,7 @@ namespace hashmod
 
                 }));
 
-                var rainbow_nameborder_friends = btn_utils.create_btn(rainbow_friend_nameborder, ButtonType.Toggle, "RBG friend border", "Enables a rainbow effect for friends name borders", Color.white, Color.red, -3, 0, sub_menu_2.transform,
+                var rainbow_nameborder_friends = btn_utils.create_btn(rainbow_friend_nameborder, ButtonType.Toggle, "RBG friend border", "Enables a rainbow effect for friends name borders", Color.white, Color.red, -3, 0, main_menu_page2_mod.transform,
                 new Action(() =>
                 {
                     rainbow_friend_nameborder = true;
@@ -481,7 +519,7 @@ namespace hashmod
                         obj.field_Private_VRCPlayerApi_0.SetNamePlateColor(new Color(1f, 1f, 0f));
                     }
                 }));
-                var antishader = btn_utils.create_btn(anti_crasher_shader, ButtonType.Toggle, "Anti-shader", "Attempts to remove possibly toxic shaders", Color.white, Color.red, -2, 0, sub_menu_2.transform,
+                var antishader = btn_utils.create_btn(anti_crasher_shader, ButtonType.Toggle, "Anti-shader", "Attempts to remove possibly toxic shaders", Color.white, Color.red, -2, 0, main_menu_page2_mod.transform,
                 new Action(() =>
                 {
                     anti_crasher_shader = true;
@@ -491,7 +529,7 @@ namespace hashmod
                     anti_crasher_shader = false;
                     shader_menu.reset_all();
                 }));
-                var antishader_fetched_list = btn_utils.create_btn(should_use_fetched_list, ButtonType.Toggle, "Anti-shader Fetched", "Will enable anti-shader to use a server hosted list of shaders as well", Color.white, Color.red, -1, 0, sub_menu_2.transform,
+                var antishader_fetched_list = btn_utils.create_btn(should_use_fetched_list, ButtonType.Toggle, "Anti-shader Fetched", "Will enable anti-shader to use a server hosted list of shaders as well", Color.white, Color.red, -1, 0, main_menu_page2_mod.transform,
                 new Action(() =>
                 {
                     should_use_fetched_list = true;
@@ -501,7 +539,7 @@ namespace hashmod
                     should_use_fetched_list = false;
                 }));
 
-                var pub_avatars_by_user_id = btn_utils.create_btn(false, ButtonType.Default, "Show public avatars by user ID", "Opens a dialog to look for the users public avatsr (Input a userid)", Color.white, Color.red, -2, 1, sub_menu_2.transform,
+                var pub_avatars_by_user_id = btn_utils.create_btn(false, ButtonType.Default, "Show public avatars by user ID", "Opens a dialog to look for the users public avatsr (Input a userid)", Color.white, Color.red, -2, 1, main_menu_page2_mod.transform,
                 new Action(() =>
                 {
                     if (Time.time > last_apicall)
@@ -531,7 +569,7 @@ namespace hashmod
 
                 }));
 
-                var resetdynbones = btn_utils.create_btn(false, ButtonType.Default, "Reset dynamic bone cache", "Forces dyn bones to re-apply colliders", Color.white, Color.red, -1, 1, sub_menu_2.transform,
+                var resetdynbones = btn_utils.create_btn(false, ButtonType.Default, "Reset dynamic bone cache", "Forces dyn bones to re-apply colliders", Color.white, Color.red, -1, 1, main_menu_page2_mod.transform,
                 new Action(() =>
                 {
                     foreach (var a in dynbones.map)
@@ -551,19 +589,18 @@ namespace hashmod
 
         private static void direct_menu()
         {
-            var tp_to_user = btn_utils.create_btn(false, ButtonType.Default, "Teleport", "Tps you to user selected", Color.white, Color.red, 0, 0, utils.get_quick_menu().transform.Find("UserInteractMenu"),
-                            new Action(() =>
-                            {
-                                var SelectedPlayer = utils.get_quick_menu().get_selected_player();
-                                VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position = SelectedPlayer.transform.position;
+            var tp_to_user = btn_utils.create_btn(false, ButtonType.Default, "Teleport", "Tps you to user selected", Color.white, Color.red, -3, 3, main_menu_utils.transform,
+            new Action(() =>
+            {
+                var SelectedPlayer = utils.get_quick_menu().get_selected_player();
+                VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position = SelectedPlayer.transform.position;
+            }),
+            new Action(() =>
+            {
 
-                            }),
-                            new Action(() =>
-                            {
+            }));
 
-                            }));
-
-            var direct_favplus = btn_utils.create_btn(false, ButtonType.Default, "Add to Fav+", "Adds the persons avatar to Fav+ silently", Color.white, Color.red, 0, -1, utils.get_quick_menu().transform.Find("UserInteractMenu"),
+            var direct_favplus = btn_utils.create_btn(false, ButtonType.Default, "Add to Fav+", "Adds the persons avatar to Fav+ silently", Color.white, Color.red, -2, 3, main_menu_utils.transform,
             new Action(() =>
             {
                 favplus.save_direct_to_favplus();
@@ -573,7 +610,7 @@ namespace hashmod
 
             }));
 
-            var pubavatar_show = btn_utils.create_btn(false, ButtonType.Default, "Show public avatars", "Attempts to show all public avatars made by the selected user", Color.white, Color.red, -1, -1, utils.get_quick_menu().transform.Find("UserInteractMenu"),
+            var pubavatar_show = btn_utils.create_btn(false, ButtonType.Default, "Show public avatars", "Attempts to show all public avatars made by the selected user", Color.white, Color.red, -1, 3, main_menu_utils.transform,
             new Action(() =>
             {
                 if (Time.time > last_apicall)
@@ -597,7 +634,7 @@ namespace hashmod
 
             }));
 
-            var dynbones_toggle = btn_utils.create_btn(false, ButtonType.Default, "Add dynamic bones", "Attempt to add all dynamic bones by the user", Color.white, Color.red, -2, -1, utils.get_quick_menu().transform.Find("UserInteractMenu"),
+            var dynbones_toggle = btn_utils.create_btn(false, ButtonType.Default, "Add dynamic bones", "Attempt to add all dynamic bones by the user", Color.white, Color.red, 0, 3, main_menu_utils.transform,
             new Action(() =>
             {
                 var found_player = utils.get_quick_menu().get_selected_player();
@@ -614,11 +651,30 @@ namespace hashmod
             {
 
             }));
+
+            // add to the real menu toggle for the sub utils menu
+            var utils_menu_toggle = btn_utils.create_btn(false, ButtonType.Default, "User-options", "Shows user options from useful_mod", Color.white, Color.red, 0, 0, utils.get_quick_menu().transform.Find("UserInteractMenu"),
+            new Action(() =>
+            {
+                var o = utils.get_quick_menu().transform.Find("UserInteractMenu");
+                o.gameObject.SetActive(false);
+                main_menu_utils.SetActive(true);
+                utils_menu_active = true;
+            }),
+            new Action(() =>
+            {
+
+            }));
+
+            //expand but dont change anything about the layout lol
+            var bg = utils.get_quick_menu().transform.Find("UserInteractMenu");
+            bg.GetComponent<RectTransform>().sizeDelta += new Vector2(0, 500);
+            bg.transform.localPosition -= new Vector3(0, 500, 0);
         }
 
         private static void main_menu()
         {
-            var button = btn_utils.create_btn(false, ButtonType.Toggle, "Fly", "Flying mode pseudo bleh", Color.white, Color.red, -3, 1, sub_menu.transform,
+            var button = btn_utils.create_btn(false, ButtonType.Toggle, "Fly", "Flying mode pseudo bleh", Color.white, Color.red, -3, 1, main_menu_mod.transform,
                             new Action(() =>
                             {
                                 fly_mode = true;
@@ -630,9 +686,10 @@ namespace hashmod
                                 fly_mode = false;
                                 if (isNoclip) return;
                                 Physics.gravity = VRCSDK2.VRC_SceneDescriptor.Instance.gravity;
+                                VRCPlayer.field_Internal_Static_VRCPlayer_0.GetComponent<VRCMotionState>().Method_Public_Void_0();
                             }));
 
-            var no_collision = btn_utils.create_btn(false, ButtonType.Toggle, "NoClip", "Disables collisions", Color.white, Color.red, -2, 1, sub_menu.transform,
+            var no_collision = btn_utils.create_btn(false, ButtonType.Toggle, "NoClip", "Disables collisions", Color.white, Color.red, -2, 1, main_menu_mod.transform,
             new Action(() =>
             {
                 if (fly_mode == true) fly_mode = false;
@@ -645,7 +702,7 @@ namespace hashmod
                 flying.noclip();
             }));
 
-            var jump_btn = btn_utils.create_btn(false, ButtonType.Default, "YesJump", "Enables jumping", Color.white, Color.red, -3, 1, sub_menu.transform,
+            var jump_btn = btn_utils.create_btn(false, ButtonType.Default, "YesJump", "Enables jumping", Color.white, Color.red, -3, 1, main_menu_mod.transform,
             new Action(() =>
             {
                 if (VRCPlayer.field_Internal_Static_VRCPlayer_0.gameObject.GetComponent<PlayerModComponentJump>() == null) VRCPlayer.field_Internal_Static_VRCPlayer_0.gameObject.AddComponent<PlayerModComponentJump>();
@@ -655,7 +712,7 @@ namespace hashmod
 
             }));
 
-            var force_button_clone = btn_utils.create_btn(clone_mode, ButtonType.Toggle, "ForceClone", "Enables the clone button always", Color.white, Color.red, -1, 1, sub_menu.transform,
+            var force_button_clone = btn_utils.create_btn(clone_mode, ButtonType.Toggle, "ForceClone", "Enables the clone button always", Color.white, Color.red, -1, 1, main_menu_mod.transform,
             new Action(() =>
             {
                 clone_mode = true;
@@ -665,7 +722,7 @@ namespace hashmod
                 clone_mode = false;
             }));
 
-            var esp_button = btn_utils.create_btn(esp_players, ButtonType.Toggle, "ESP", "Enables ESP for players", Color.white, Color.red, 0, 1, sub_menu.transform,
+            var esp_button = btn_utils.create_btn(esp_players, ButtonType.Toggle, "ESP", "Enables ESP for players", Color.white, Color.red, 0, 1, main_menu_mod.transform,
             new Action(() =>
             {
                 esp_players = true;
@@ -681,7 +738,7 @@ namespace hashmod
                 }
             }));
 
-            var portalbtn = btn_utils.create_btn(delete_portals, ButtonType.Toggle, "AntiPortal", "Auto deletes portals spawned", Color.white, Color.red, -3, 0, sub_menu.transform,
+            var portalbtn = btn_utils.create_btn(delete_portals, ButtonType.Toggle, "AntiPortal", "Auto deletes portals spawned", Color.white, Color.red, -3, 0, main_menu_mod.transform,
             new Action(() =>
             {
                 delete_portals = true;
@@ -691,7 +748,7 @@ namespace hashmod
                 delete_portals = false;
             }));
 
-            var blockinfobutton = btn_utils.create_btn(info_plus_toggle, ButtonType.Toggle, "Info+", "Shows in social next to the user name\nif you were blocked by them", Color.white, Color.red, -2, 0, sub_menu.transform,
+            var blockinfobutton = btn_utils.create_btn(info_plus_toggle, ButtonType.Toggle, "Info+", "Shows in social next to the user name\nif you were blocked by them", Color.white, Color.red, -2, 0, main_menu_mod.transform,
             new Action(() =>
             {
                 info_plus_toggle = true;
@@ -721,7 +778,7 @@ namespace hashmod
                 }
             }));
 
-            var speedhack = btn_utils.create_btn(false, ButtonType.Toggle, "Speed+", "Sets your player speeds a bit higher than usual", Color.white, Color.red, -1, 0, sub_menu.transform,
+            var speedhack = btn_utils.create_btn(false, ButtonType.Toggle, "Speed+", "Sets your player speeds a bit higher than usual", Color.white, Color.red, -1, 0, main_menu_mod.transform,
             new Action(() =>
             {
                 speed_hacks = true;
@@ -732,7 +789,7 @@ namespace hashmod
                 speed.set_speeds(2f, 4f);
             }));
 
-            var anticrasher = btn_utils.create_btn(anti_crasher, ButtonType.Toggle, "AntiCrash", "Tries to detect possibly harmful models\nand effects, removes them automatically\nThe config of max polys/particles can be found in the config file!", Color.white, Color.red, 0, 0, sub_menu.transform,
+            var anticrasher = btn_utils.create_btn(anti_crasher, ButtonType.Toggle, "AntiCrash", "Tries to detect possibly harmful models\nand effects, removes them automatically\nThe config of max polys/particles can be found in the config file!", Color.white, Color.red, 0, 0, main_menu_mod.transform,
             new Action(() =>
             {
                 anti_crasher = true;
@@ -742,7 +799,7 @@ namespace hashmod
                 anti_crasher = false;
             }));
 
-            var anticrasher_friend = btn_utils.create_btn(anti_crasher_ignore_friends, ButtonType.Toggle, "IgnoreFriends", "Will make the AntiCrasher ignore your friends!", Color.white, Color.red, -2, -1, sub_menu.transform,
+            var anticrasher_friend = btn_utils.create_btn(anti_crasher_ignore_friends, ButtonType.Toggle, "IgnoreFriends", "Will make the AntiCrasher ignore your friends!", Color.white, Color.red, -2, -1, main_menu_mod.transform,
             new Action(() =>
             {
                 anti_crasher_ignore_friends = true;
@@ -752,7 +809,7 @@ namespace hashmod
                 anti_crasher_ignore_friends = false;
             }));
 
-            var esp_rainbowmode = btn_utils.create_btn(esp_rainbow_mode, ButtonType.Toggle, "ESP Rainbow", "Makes the player ESP very colorful!", Color.white, Color.red, -1, -1, sub_menu.transform,
+            var esp_rainbowmode = btn_utils.create_btn(esp_rainbow_mode, ButtonType.Toggle, "ESP Rainbow", "Makes the player ESP very colorful!", Color.white, Color.red, -1, -1, main_menu_mod.transform,
             new Action(() =>
             {
                 esp_rainbow_mode = true;
@@ -762,7 +819,7 @@ namespace hashmod
                 esp_rainbow_mode = false;
             }));
 
-            var antispawnmusic = btn_utils.create_btn(anti_spawn_music, ButtonType.Toggle, "AntiSpawnMusic", "Disables annoying player spawn-audio", Color.white, Color.red, 0, -1, sub_menu.transform,
+            var antispawnmusic = btn_utils.create_btn(anti_spawn_music, ButtonType.Toggle, "AntiSpawnMusic", "Disables annoying player spawn-audio", Color.white, Color.red, 0, -1, main_menu_mod.transform,
             new Action(() =>
             {
                 anti_spawn_music = true;
