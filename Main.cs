@@ -46,6 +46,8 @@ using VRC.SDKBase;
 using VRCSDK2.Validation.Performance.Scanners;
 using Steamworks;
 using WebSocketSharp;
+using Transmtn.DTO.Notifications;
+using Il2CppSystem.Security.Cryptography;
 
 namespace hashmod
 {
@@ -66,7 +68,7 @@ namespace hashmod
         public static Text slider_walkspeed_txt;
         public static float fov_cam = 60f;
         public static bool needs_update = true;
-        public static string mod_version = "30";
+        public static string mod_version = "31";
         public static int latest_version = 0;
         public static bool should_show_update_notice = false;
         public static bool fly_mode = false;
@@ -101,6 +103,7 @@ namespace hashmod
         public static bool setup_button;
         public static bool setup_userinfo_button;
         public static bool utils_menu_active = false;
+        public static bool in_input_shit = false;
         public static bool isNoclip = false;
         public static List<int> noClipToEnable = new List<int>();
         public LayerMask collisionLayers = -1;
@@ -126,8 +129,7 @@ namespace hashmod
                     ServicePointManager.ServerCertificateValidationCallback = (System.Object s, X509Certificate c, X509Chain cc, SslPolicyErrors ssl) => true;
 
                     HttpWebResponse httpWebResponse = (HttpWebResponse)WebRequest.Create("https://raw.githubusercontent.com/kichiro1337/vrchat_useful_mod/master/latest.txt").GetResponse();
-                    
-                    
+                                       
                     //after suffering to convert this from a raw dll file to anything saveable i just decided to go with base64 
 
                     string[] files = Directory.GetFiles("Mods");
@@ -329,8 +331,8 @@ namespace hashmod
         {
 
         }
-
         public static float last_apicall = 0;
+        public static float last_msg_apicall = 0;
         public override void VRChat_OnUiManagerInit()
         {
             var shortcutmenu = utils.get_quick_menu().transform.Find("ShortcutMenu");
@@ -652,8 +654,41 @@ namespace hashmod
 
             }));
 
+            // new row 2
+            var send_message_to_user = btn_utils.create_btn(false, ButtonType.Default, "Send message", "Sends a custom invite message to select user", Color.white, Color.red, -3, 2, main_menu_utils.transform,
+            new Action(() =>
+            {
+                if (Time.time > last_msg_apicall)
+                {
+                    last_msg_apicall = Time.time + 30;
+                    var found_player = utils.get_quick_menu().get_selected_player();
+                    if (found_player == null || found_player.field_Private_APIUser_0 == null) return;
+                    sub_menu_open = false;
+                    sub_sub_menu_open = false;
+                    utils_menu_active = false;
+                    in_input_shit = true;
+                    menu.input_text("Enter the text to send", "A message to send to the target", new Action<string>((a) =>
+                    {
+                        in_input_shit = false;
+                        hashmod.main_menu_utils.SetActive(false);
+                        hashmod.main_menu_mod.SetActive(false);
+                        hashmod.main_menu_page2_mod.SetActive(false);
+                        VRCWebSocketsManager.field_Private_Static_VRCWebSocketsManager_0.field_Private_Api_0.PostOffice.Send(Invite.Create(found_player.field_Private_APIUser_0.id, "", new Location("", new Transmtn.DTO.Instance("", found_player.field_Private_APIUser_0.id, "", "", "", false)), a));
+                    }));
+                }
+                else
+                {
+                    var sec_left = last_msg_apicall - Time.time;
+                    error_type_poput("Function is still on cooldown!", "Please wait " + Math.Floor(sec_left) + " seconds before trying again!");
+                }
+            }),
+            new Action(() =>
+            {
+
+            }));
+
             // add to the real menu toggle for the sub utils menu
-            var utils_menu_toggle = btn_utils.create_btn(false, ButtonType.Default, "User-options", "Shows user options from useful_mod", Color.white, Color.red, 0, 0, utils.get_quick_menu().transform.Find("UserInteractMenu"),
+            var utils_menu_toggle = btn_utils.create_btn(false, ButtonType.Default, "User-options", "Shows user options from useful_mod", Color.white, Color.green, 0, 0, utils.get_quick_menu().transform.Find("UserInteractMenu"),
             new Action(() =>
             {
                 var o = utils.get_quick_menu().transform.Find("UserInteractMenu");
@@ -664,12 +699,7 @@ namespace hashmod
             new Action(() =>
             {
 
-            }));
-
-            //expand but dont change anything about the layout lol
-            var bg = utils.get_quick_menu().transform.Find("UserInteractMenu");
-            bg.GetComponent<RectTransform>().sizeDelta += new Vector2(0, 500);
-            bg.transform.localPosition -= new Vector3(0, 500, 0);
+            }), 1);
         }
 
         private static void main_menu()
