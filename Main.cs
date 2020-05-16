@@ -68,7 +68,7 @@ namespace hashmod
         public static Text slider_walkspeed_txt;
         public static float fov_cam = 60f;
         public static bool needs_update = true;
-        public static string mod_version = "31";
+        public static string mod_version = "32";
         public static int latest_version = 0;
         public static bool should_show_update_notice = false;
         public static bool fly_mode = false;
@@ -247,7 +247,7 @@ namespace hashmod
                     update_friend_list();                                                  
                 }
                 if (clone_mode) direct_clone.direct_menu_clone();
-                if (sub_menu_open || sub_sub_menu_open || utils_menu_active) menu.menu_toggle_handler();
+                if (sub_menu_open || sub_sub_menu_open || utils_menu_active || shader_menu.open_menu) menu.menu_toggle_handler();
                 if (anti_crasher_shader) shader_menu.work();
                 visuals.update_color();
                 if (rainbow_friend_nameborder) name_border_rbg.name_border_clr();               
@@ -352,6 +352,7 @@ namespace hashmod
                 var clone_button_getasset = UnityEngine.Object.Instantiate<GameObject>(back_button.gameObject);
                 var clone_button_clonepub = UnityEngine.Object.Instantiate<GameObject>(back_button.gameObject);
                 var clone_button_clone_favplus = UnityEngine.Object.Instantiate<GameObject>(back_button.gameObject);
+                var clone_button_clone_msg = UnityEngine.Object.Instantiate<GameObject>(back_button.gameObject);
                 var clone_button_clone = UnityEngine.Object.Instantiate<GameObject>(utils.get_interact_menu().cloneAvatarButton.gameObject);
 
                 clone_button.gameObject.name = "Teleport";
@@ -392,10 +393,43 @@ namespace hashmod
                 clone_button_clone_favplus.GetComponentInChildren<UnityEngine.UI.Button>().onClick = new UnityEngine.UI.Button.ButtonClickedEvent();
                 clone_button_clone_favplus.GetComponentInChildren<UnityEngine.UI.Button>().onClick.AddListener(new Action(() => { favplus.save_social_to_favplus(); }));
 
+                clone_button_clone_msg.gameObject.name = $"MSG invite";
+                clone_button_clone_msg.transform.localPosition -= new Vector3(1250, 0, 0);
+                clone_button_clone_msg.GetComponentInChildren<UnityEngine.UI.Text>().text = $"Send msg";
+                clone_button_clone_msg.GetComponentInChildren<UnityEngine.UI.Text>().fontSize -= 8;
+                clone_button_clone_msg.GetComponentInChildren<UnityEngine.UI.Button>().onClick = new UnityEngine.UI.Button.ButtonClickedEvent();
+                clone_button_clone_msg.GetComponentInChildren<UnityEngine.UI.Button>().onClick.AddListener(new Action(() => 
+                {
+                    var ff = GameObject.Find("Screens").transform.Find("UserInfo");
+                    var userInfo = ff.transform.GetComponentInChildren<VRC.UI.PageUserInfo>();
+                    MelonModLogger.Log("user selected " + userInfo.displayName + " id " + userInfo.user.id);
+
+                    if (Time.time > last_msg_apicall)
+                    {
+                        last_msg_apicall = Time.time + 30;
+                        in_input_shit = true;
+                        menu.input_text("Enter the text to send", "A message to send to the target", new Action<string>((a) =>
+                        {
+                            in_input_shit = false;
+
+                            VRCWebSocketsManager.field_Private_Static_VRCWebSocketsManager_0.field_Private_Api_0.PostOffice.Send(Invite.Create(userInfo.user.id, "", new Location("", new Transmtn.DTO.Instance("", userInfo.user.id, "", "", "", false)), a));
+                        }));
+                    }
+                    else
+                    {
+                        in_input_shit = false;
+
+                        var sec_left = last_msg_apicall - Time.time;
+                        error_type_poput("Function is still on cooldown!", "Please wait " + Math.Floor(sec_left) + " seconds before trying again!");
+                    }
+                }));
+
+
                 clone_button.transform.SetParent(screensmenu, false);
                 clone_button_getasset.transform.SetParent(screensmenu, false);
                 clone_button_clonepub.transform.SetParent(screensmenu, false);
                 clone_button_clone_favplus.transform.SetParent(screensmenu, false);
+                clone_button_clone_msg.transform.SetParent(screensmenu, false);
             }
 
             if (shortcutmenu != null && setup_button == false)
@@ -663,21 +697,19 @@ namespace hashmod
                     last_msg_apicall = Time.time + 30;
                     var found_player = utils.get_quick_menu().get_selected_player();
                     if (found_player == null || found_player.field_Private_APIUser_0 == null) return;
-                    sub_menu_open = false;
-                    sub_sub_menu_open = false;
-                    utils_menu_active = false;
+
                     in_input_shit = true;
                     menu.input_text("Enter the text to send", "A message to send to the target", new Action<string>((a) =>
                     {
                         in_input_shit = false;
-                        hashmod.main_menu_utils.SetActive(false);
-                        hashmod.main_menu_mod.SetActive(false);
-                        hashmod.main_menu_page2_mod.SetActive(false);
+
                         VRCWebSocketsManager.field_Private_Static_VRCWebSocketsManager_0.field_Private_Api_0.PostOffice.Send(Invite.Create(found_player.field_Private_APIUser_0.id, "", new Location("", new Transmtn.DTO.Instance("", found_player.field_Private_APIUser_0.id, "", "", "", false)), a));
                     }));
                 }
                 else
                 {
+                    in_input_shit = false;
+
                     var sec_left = last_msg_apicall - Time.time;
                     error_type_poput("Function is still on cooldown!", "Please wait " + Math.Floor(sec_left) + " seconds before trying again!");
                 }
