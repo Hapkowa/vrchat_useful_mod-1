@@ -34,7 +34,7 @@ If you want to stay up to date join the discord server! [Click to join the updat
 - Rainbow name borders for friends in your lobby
 - Anti-Shader with custom local block list and server-fetched blacklist with ability to disable fetched list use
 - Ability to send custom invite texts to friends outside and inside of your instance
-
+- Alternative fly controls for on-press type height adjustments
 
 Please make sure to install the managed folder correctly! (Oculus client is not supported)
 
@@ -48,12 +48,14 @@ Please make sure to install the managed folder correctly! (Oculus client is not 
 [Click here for a video guide](https://streamable.com/vom3jl)
 
 
-![Example social page](https://i.imgur.com/xcCr993.png)
-![Example in-game menu](https://i.imgur.com/uO98ilz.png) 
-![Example in-game menu p2](https://i.imgur.com/Vdfwmfn.png)
+![Example social page](https://i.imgur.com/mtVqjr9.png)
+![Example in-game menu](https://i.imgur.com/GlSmoFM.png) 
+![Example in-game menu p2](https://i.imgur.com/p1xeD05.png)
 ![Example fav+](https://i.imgur.com/xWE8nmj.jpg)
 ![Example in-game menu button](https://i.imgur.com/NlolOFk.png)
-![Example in-game direct menu](https://i.imgur.com/b1ULC29.png)
+![Example in-game direct menu](https://i.imgur.com/P8v5ktL.png)
+![Example in-game user options](https://i.imgur.com/Bz4K6Py.png)
+![Example shader menu](https://i.imgur.com/EAcnqg1.png)
 
 Disclaimer:
 This is not a official modification for VRChat and is not approved by any means.
