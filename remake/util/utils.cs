@@ -28,6 +28,62 @@ namespace hashmod.remake.util
 {
     public static class utils
     {
+        static public int owo = 0;
+        //x=lr y=ud
+        //no idea how this shit works tbh somehow it will always copy the original objects state no matter what I do, if anyone can fix this pls tell me
+        public static GameObject make_checkbox_ded(int x, int y, string txt, bool def, GameObject parent, Action<bool> act)
+        {
+            var BtnObj = GameObject.Find("UserInterface/MenuContent/Screens/Settings/OtherOptionsPanel/SkipGoButtonInLoad").gameObject;
+            var sss = UnityEngine.Object.Instantiate(BtnObj, BtnObj.transform, true);
+
+            var Btn = sss.GetComponent<UnityEngine.UI.Toggle>();
+            Btn.onValueChanged = new Toggle.ToggleEvent();
+            Btn.transform.localPosition = new Vector3(parent.transform.localPosition.x - 275 + 100 + x, parent.transform.localPosition.y - 50 + 0 - y, parent.transform.localPosition.z);
+            Btn.gameObject.SetActive(true);
+            Btn.Set(def); Btn.isOn = def;
+            Btn.transform.SetParent(parent.transform, false);
+            Btn.transform.localPosition += new Vector3(150, 750);
+            //Btn.GetComponentInChildren<UnityEngine.UI.Text>().text = txt;
+            Btn.transform.localScale += new Vector3(2, 2, 0);
+
+            return Btn.gameObject;
+        }
+
+        public static Text make_text_toggle(int x, int y, string txt, bool def, GameObject parent, Action<bool> act)
+        {
+            var BtnObj = GameObject.Find("UserInterface/MenuContent/Screens/Settings/OtherOptionsPanel/SkipGoButtonInLoad").gameObject.GetComponent<UnityEngine.UI.Toggle>();
+
+            var ds = new GameObject("qwertzzzz" + owo);
+            ds.transform.SetParent(parent.transform, false);
+            var text_thing = ds.AddComponent<Text>();
+
+            text_thing.supportRichText = true;
+            text_thing.text = "<b>" + txt + "</b>";
+            text_thing.font = BtnObj.GetComponentInChildren<Text>().font;
+            text_thing.fontStyle = BtnObj.GetComponentInChildren<Text>().fontStyle;
+            text_thing.fontSize = 78;
+            if (def == false) text_thing.color = Color.red;
+            if (def == true) text_thing.color = Color.green;
+            text_thing.gameObject.SetActive(true);
+
+            text_thing.transform.localPosition = new Vector3(parent.transform.localPosition.x - 275 + 150 + x, parent.transform.localPosition.y - 65 - y, parent.transform.localPosition.z);
+            text_thing.transform.localPosition += new Vector3(250, 2400, 0);
+            text_thing.GetComponent<RectTransform>().sizeDelta = new Vector2(18 * 100, 100);
+
+            var ck = text_thing.gameObject.AddComponent<Toggle>();
+            ck.transform.localPosition -= new Vector3(50, 0, 0);
+            ck.Set(def); ck.gameObject.SetActive(true);
+            ck.onValueChanged = new Toggle.ToggleEvent();
+            ck.onValueChanged.AddListener(act);
+            ck.onValueChanged.AddListener(new Action<bool>((a) => //oh yeah also color management
+            {
+                if (a == false) text_thing.color = Color.red;
+                if (a == true) text_thing.color = Color.green;
+            }));
+
+            owo++;
+            return text_thing;
+        }
         public static bool send_message(string msg, string id)
         {
             if (VRCWebSocketsManager.field_Private_Static_VRCWebSocketsManager_0 == null || VRCWebSocketsManager.field_Private_Static_VRCWebSocketsManager_0.field_Private_Api_0 == null) return false;
@@ -104,7 +160,7 @@ namespace hashmod.remake.util
         public static Player get_player(string id)
         {
             var t = get_all_player();
-            for (var c=0;c<t.Count;c++)
+            for (var c = 0; c < t.Count; c++)
             {
                 var p = t[c]; if (p == null) continue;
                 if (p.get_api().id == id) return p;
@@ -159,7 +215,7 @@ namespace hashmod.remake.util
         }
         public static Text make_slider(GameObject parent, Action<float> act, int bx, int by, string text, float def, float max, float min, int negate)
         {
-            var btn = btn_utils.create_btn(false, ButtonType.Default, "slider_element_" + bx + by, "", Color.white, Color.white, bx, by, parent.transform, null);  btn.SetActive(false);
+            var btn = btn_utils.create_btn(false, ButtonType.Default, "slider_element_" + bx + by, "", Color.white, Color.white, bx, by, parent.transform, null); btn.SetActive(false);
             var slider = UnityEngine.Object.Instantiate<Transform>(utils.get_ui_manager().menuContent.transform.Find("Screens/Settings/AudioDevicePanel/VolumeSlider"), parent.gameObject.transform);
             slider.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
             slider.transform.localPosition = btn.gameObject.transform.localPosition; slider.transform.localPosition -= new Vector3(0, negate);
@@ -175,7 +231,7 @@ namespace hashmod.remake.util
             var txt_component = txt.AddComponent<Text>();
             txt_component.font = Resources.GetBuiltinResource<Font>("Arial.ttf"); txt_component.fontSize = 64; txt_component.text = text;
             txt_component.transform.localPosition = slider.transform.localPosition;
-            txt_component.transform.localPosition += new Vector3(txt_component.fontSize * text.Count()/5, 75);
+            txt_component.transform.localPosition += new Vector3(txt_component.fontSize * text.Count() / 5, 75);
             txt_component.enabled = true;
             txt_component.GetComponent<RectTransform>().sizeDelta = new Vector2(txt_component.fontSize * text.Count(), 100);
             txt_component.alignment = TextAnchor.MiddleLeft;
