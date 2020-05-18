@@ -1,21 +1,21 @@
-﻿using Il2CppSystem.Net;
+using Il2CppSystem.Net;
 using MelonLoader;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TestMod.remake.util;
+using hashmod.remake.util;
 using UnityEngine;
 using VRC;
 
-namespace TestMod.remake.funcs.game
+namespace hashmod.remake.funcs.game
 {
     public class antispawn_sound
     {
         public struct avi_data
         {
-            public string userid;
+            public string avid;
             public float check_time;
         }
         public static Dictionary<string, avi_data> avatar_list = new Dictionary<string, avi_data>();
@@ -44,9 +44,9 @@ namespace TestMod.remake.funcs.game
                 if (avatar_list.Count == 0) return;
                 foreach (var obj in avatar_list)
                 {
-                    if (obj.Key == null) continue; if (obj.Value.userid == null) continue;
-                    if (obj.Key.Contains(user.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_0.id)) continue; /*dont delete the current avis*/
-                    if (obj.Value.userid.Contains(user.field_Private_APIUser_0.id)) avatar_list.Remove(obj.Key);
+                    if (obj.Key == null) continue; if (obj.Value.avid == null) continue;
+                    if (obj.Key.Contains(user.field_Private_APIUser_0.id)) continue; /*dont delete the current avis*/
+                    if (obj.Value.avid.Contains(user.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_0.id)) avatar_list.Remove(obj.Key);
                 }
             }
             catch (Exception e) { }
@@ -54,13 +54,13 @@ namespace TestMod.remake.funcs.game
         public static bool has_switched_avatar(Player user)
         {
             if (avatar_list.Count == 0) return false;
-            var avatar_known = avatar_list.ContainsKey(user.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_0.id);
+            var avatar_known = avatar_list.ContainsKey(user.field_Private_APIUser_0.id);
             if (avatar_known)
             {
-                if (avatar_list[user.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_0.id].userid.Contains(user.field_Private_APIUser_0.id)) return false;
+                if (avatar_list[user.field_Private_APIUser_0.id].avid.Contains(user.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_0.id)) return false;
                 else return true;
             }
-            return true;
+            return false;
         }
         public static bool should_check_user(Player user)
         {
@@ -68,12 +68,12 @@ namespace TestMod.remake.funcs.game
             var should_recheck = has_switched_avatar(user);
             if (should_recheck)
             {
-                avatar_list.Remove(user.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_0.id);
+                avatar_list.Remove(user.field_Private_APIUser_0.id);
                 delete_user_avis(user);
             }
-            if (avatar_list.ContainsKey(user.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_0.id))
+            if (avatar_list.ContainsKey(user.field_Private_APIUser_0.id))
             {
-                var data_for_usr = avatar_list[user.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_0.id];
+                var data_for_usr = avatar_list[user.field_Private_APIUser_0.id];
                 if (data_for_usr.check_time > Time.time)
                 {
                     //still within checking time
@@ -81,7 +81,7 @@ namespace TestMod.remake.funcs.game
                 }                
                 return false;
             }
-            avatar_list.Add(user.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_0.id, new avi_data() { userid = user.field_Private_APIUser_0.id, check_time = Time.time + 2 });
+            avatar_list.Add(user.field_Private_APIUser_0.id, new avi_data() { avid = user.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_0.id, check_time = Time.time + 2 });
             return true;
         }
         public static void anti_spawn_sound()
