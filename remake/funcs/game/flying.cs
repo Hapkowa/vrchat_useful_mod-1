@@ -4,29 +4,37 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
-using TestMod;
+using hashmod;
 using VRC;
 using VRC.Core;
 using VRCSDK2;
-using TestMod.remake.util;
+using hashmod.remake.util;
 using Il2CppSystem.Net;
 using MelonLoader;
 
-namespace TestMod.remake.funcs.game
+namespace hashmod.remake.funcs.game
 {
     public class flying
     {
         public static void height_adjust()
         {
-            if (Input.GetKeyDown(KeyCode.Q))
+            if (hashmod.fly_mode_onpress == false)
             {
-                hashmod.fly_up = false;
-                hashmod.fly_down = !hashmod.fly_down;
+                if (Input.GetKeyDown(KeyCode.Q))
+                {
+                    hashmod.fly_up = false;
+                    hashmod.fly_down = !hashmod.fly_down;
+                }
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    hashmod.fly_down = false;
+                    hashmod.fly_up = !hashmod.fly_up;
+                }
             }
-            if (Input.GetKeyDown(KeyCode.E))
+            else
             {
-                hashmod.fly_down = false;
-                hashmod.fly_up = !hashmod.fly_up;
+                if (Input.GetKey(KeyCode.Q)) VRCPlayer.field_Internal_Static_VRCPlayer_0.gameObject.transform.position = VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position - new Vector3(0f, hashmod.flying_speed * Time.deltaTime, 0f);
+                if (Input.GetKey(KeyCode.E)) VRCPlayer.field_Internal_Static_VRCPlayer_0.gameObject.transform.position = VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position + new Vector3(0f, hashmod.flying_speed * Time.deltaTime, 0f);
             }
 
             if (Input.GetAxis("Oculus_CrossPlatform_SecondaryThumbstickVertical") < 0f) VRCPlayer.field_Internal_Static_VRCPlayer_0.gameObject.transform.position = VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position - new Vector3(0f, (hashmod.flying_speed * Time.deltaTime) * (Input.GetAxis("Oculus_CrossPlatform_SecondaryThumbstickVertical") * -1), 0f);
@@ -42,12 +50,16 @@ namespace TestMod.remake.funcs.game
             if (Input.GetKey(KeyCode.D)) VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position += VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.right * hashmod.flying_speed * Time.deltaTime;
             
             var motion_com = VRCPlayer.field_Internal_Static_VRCPlayer_0.GetComponent<VRCMotionState>();
-            if (motion_com != null) motion_com.Method_Public_Void_3();
+            if (motion_com != null) motion_com.Method_Public_Void_3();            
         }
         public static void noclip()
         {
             if (hashmod.isNoclip) Physics.gravity = new Vector3(0, 0, 0);
-            else Physics.gravity = VRC_SceneDescriptor.Instance.gravity;
+            else
+            {
+                Physics.gravity = VRC_SceneDescriptor.Instance.gravity;
+                VRCPlayer.field_Internal_Static_VRCPlayer_0.GetComponent<VRCMotionState>().Method_Public_Void_0();
+            }
 
             Collider[] array = GameObject.FindObjectsOfType<Collider>();
             Component component = VRCPlayer.field_Internal_Static_VRCPlayer_0.GetComponents<Collider>().FirstOrDefault<Component>();
