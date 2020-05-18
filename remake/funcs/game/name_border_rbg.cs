@@ -1,13 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TestMod.remake.util;
+using hashmod.remake.util;
 using UnityEngine;
+using VRC.Core;
 
-
-namespace TestMod.remake.funcs.game
+namespace hashmod.remake.funcs.game
 {
     public class name_border_rbg
     {
@@ -20,8 +20,10 @@ namespace TestMod.remake.funcs.game
                 var obj = users[i];
                 if (obj == null) continue;
                 if (obj.field_Private_APIUser_0 == null) continue;
-                if (obj.field_Private_APIUser_0.isFriend == false) continue;
-                obj.field_Private_VRCPlayerApi_0.SetNamePlateColor(HSBColor.ToColor(new HSBColor(Mathf.PingPong(Time.time * 1, 1), 1, 1)));
+                if (obj.field_Private_APIUser_0.id.Contains(APIUser.CurrentUser.id)) continue;
+                if (hashmod.friend_list.Contains(obj.field_Private_APIUser_0.id) == false) continue;             
+
+                obj.field_Private_VRCPlayerApi_0.SetNamePlateColor(HSBColor.ToColor(new HSBColor(Mathf.PingPong(Time.time * 0.1f, 1), 1, 1)));
             }
         }
     }
