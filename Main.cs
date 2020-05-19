@@ -67,9 +67,11 @@ namespace hashmod
         public static Text slider_flyspeed_txt;
         public static Text slider_runspeed_txt;
         public static Text slider_walkspeed_txt;
+        public static Text audio_perplayer;
         public static float fov_cam = 60f;
+        public static float audio_level = 0f;
         public static bool needs_update = true;
-        public static string mod_version = "33";
+        public static string mod_version = "36";
         public static int latest_version = 0;
         public static bool should_show_update_notice = false;
         public static bool fly_mode = false;
@@ -237,6 +239,16 @@ namespace hashmod
                 }
             }
         }
+        public static void update_text()
+        {
+            var sp = utils.get_quick_menu().get_selected_player();
+            if (sp == null) return;
+            if (sp.field_Private_APIUser_0 == null) return;
+            var uspeaker = sp.GetComponentInChildren<USpeaker>();
+            if (uspeaker == null) return;
+            audio_level = uspeaker.SpeakerVolume;
+            audio_perplayer.text = "  Audio level (" + String.Format("{0:0.##}", uspeaker.SpeakerVolume) + ")";
+        }
         public override void OnUpdate()
         {
             try
@@ -250,6 +262,7 @@ namespace hashmod
                 if (Time.time > last_routine)
                 {
                     last_routine = Time.time + 1;
+                    if (utils_menu_active) update_text();
                     if (anti_crasher) anticrash.work();
                     if (speed_hacks) speed.set_speeds(walk_speed, run_speed);
                     if (info_plus_toggle) infoplus.info_plus();
@@ -275,7 +288,6 @@ namespace hashmod
             var found_edit_btn = GameObject.Find("Screens/Social/Current Status/StatusButton");
             if (found_edit_btn != null)
             {
-
                 init_social_refresh = true;
                 var button = found_edit_btn.transform.GetComponentInChildren<Button>();
 
@@ -388,7 +400,7 @@ namespace hashmod
                 favplus.setup_fav_plus();
 
                 /*clones*/
-                social_btn(0f, 0f, "Teleport", new Action(() => { social.do_clone_to_social(); }));
+                social_btn(0f, 0f, "Teleport", new Action(() => { social.do_tp_to_social(); }));
                 social_btn(130f, 0f, "Log asset", new Action(() => { social.log_asset_to_social(); }));
                 social_btn(260f, 0f, "Clone", new Action(() => { social.do_clone_to_social(); }));
                 social_btn(0f, -65f, "Add Fav+", new Action(() => { favplus.save_social_to_favplus(); }));
@@ -412,7 +424,7 @@ namespace hashmod
                     shortcutmenu.gameObject.SetActive(false);
                 }),
                 new Action(() =>
-                {
+                {   
 
                 }));
                 //menu-menu entrance
@@ -458,12 +470,32 @@ namespace hashmod
                     slider_walkspeed_txt.text = "  Walk-speed (" + String.Format("{0:0.##}", v) + ")";
                 }, -1, 3, "  Walk-speed (" + String.Format("{0:0.##}", walk_speed) + ")", walk_speed, 20, 2, 200);
 
+                var ck_anticrash = utils.make_text_toggle(0, 550, "Anti-crash", anti_crasher, main_menu_page2_mod, new Action<bool>((a) =>
+                {
+                    if (a)
+                    { anti_crasher = true; }
+                    else
+                    { anti_crasher = false; }
+                }));
+
+
                 Application.targetFrameRate = max_fps;
             }
         }
 
         private static void direct_menu()
         {
+            audio_perplayer = utils.make_slider(main_menu_utils, delegate (float v)
+            {
+                var sp = utils.get_quick_menu().get_selected_player();
+                if (sp.field_Private_APIUser_0 == null) return;
+                var uspeaker = sp.GetComponentInChildren<USpeaker>();
+                if (uspeaker == null) return;
+                uspeaker.SpeakerVolume = v;
+                audio_level = v;
+                audio_perplayer.text = "  Audio level (" + String.Format("{0:0.##}", uspeaker.SpeakerVolume) + ")";
+            }, -3, 2, "  Audio level (" + String.Format("{0:0.##}", 1) + ")", audio_level, 1, 0, 350);
+
             var tp_to_user = btn_utils.create_btn(false, ButtonType.Default, "Teleport", "Tps you to user selected", Color.white, Color.red, -3, 3, main_menu_utils.transform,
             new Action(() =>
             {
