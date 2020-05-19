@@ -291,7 +291,6 @@ GAPH Custom Shader/Integrated Particle/Integrated Particle (ValueControl)
 Nath✮/LeaveThis0.2
 Doppels shaders/MetallicFX v5.0MediumRender
 Nath✮/OurAmplify V0.2
-Luka/MegaAE
 Nath✮/Toon/Opaque
 NEK0/ Color Screen 
 Doppels shaders/ScreenFX/Dope Shader SuckMyDickDoppel
@@ -311,7 +310,6 @@ Video/RealtimeEmissiveGamma
 Custom/Screen/Neon Shader
 Magic3000/ScreenSpace
 Custom/Screen/Blur Shader
-Particles/Alpha Blended Premultiply
 Mega Screen Shader
 Magic3000/RGB-Glitch
 Izzy/Zoom Shake
@@ -321,12 +319,10 @@ Vexon/ScreenSpace
 NEK0/Screen/ grey scale v1
 KriptoFX/RFX4/CutoutBorder
 NEK0/Screen/ Dark Screen shader v2
-KriptoFX/ME/Distortion
 KriptoFX/ME/DistortionMobile
 KriptoFX/RFX4/Particle
 Decal/particle decal additive
 KriptoFX/ME/DistortPerlinMobile
-Ciconia Studio/Double Sided/Emissive/Diffuse
 Doppels shaders/ScreenFX/Dope Shader Corpse
 XomAy_y/XomAy_yShaderAMPLOFFv.3
 XomAy_y/XomAy_yShaderAMPLOFFV.2
@@ -335,22 +331,17 @@ DocMe/Anti/AntiShader1
 Aidan/ShaderToy/Question of Time v1.2
 DocMe/EpicShader
 Disconnect/AntiShader/AntiShader Step 1
-DocMe/Beautiful
 DocMe/AntiShader2
 DocMe/AntiShader1
-.poiyomi/Toon/Default/OpaqueOld
 .Loli_Explorer.exe/Eye Shader ZTest
 .Loli_Explorer.exe/Eye Shader
 DasLucas/BlackGlitch
 DasLucas/BlackGlitchZTesttt
-.poiyomi/Toon/Default/OpaqueZTest
-DocMe/BeautifulShaderv0.21
 DasLucas/LightingV2
 DasLucas/LightingV2ZTest
 FX/Flare
 FruityFusion/FusionVFX 3.0
 Mochie/Uber Shader (Opaque)
-Mochie/Mochie's Uber Shader (Opaque)
 Particles/Additive (Soft)
 Doppels shaders/Distortion Wave 3D Sphere mesh
 DEDSEC/FX
@@ -358,7 +349,6 @@ Mochie/Mochie's Screen FX
 KriptoFX/RFX4/DistortionParticles
 SM/SM_Add
 StartSphereV6
-.poiyomi/Toon/Default/Opaque
 Leviant's Shaders/UberShader v2.9
 _Shaders/Rainbow
 AV/Unlit/Hexagons
@@ -369,8 +359,64 @@ Leviant's Shaders/ScreenSpace Ubershader v2.7.3
 Corpse/Uber Particle v1.4
 Screen Ripple/Droplet
 Bender's Shaders/Screen FX/Screen Fade
-Naito/Rainbow World
 Doppels shaders/MetallicFXOverRenderByNath
+.Mel0n/Magic3000/RGB-Glitch-Stereo
+Luka/MegaAE
+DocMe/Beautiful
+Custom/Misc/Invisible Shader (Hides Nametag)
+Leviant's Shaders/ScreenSpace Ubershader v2.8
+ScreenFX/Dope Shader 1.13
+Mirza Beig/Particles/Alpha Cutoff/Additive
+ScreenFX/Dope Shader 1.0
+KriptoFX/RFX4/Decal/DistortMaskMobile
+Izzy/IzzyVRC
+Izzy/IzzyRFC
+VRChat/PanosphereV2
+Legacy Shaders/Particles/Alpha Blended Premultiply
+Effects/FPS_Pack/Lazer
+DocMe/BeautifulShaderv0.21
+DocMe/FilmGrainV3
+JINX/Doppels shaders/MetallicFX v5.0/Overrender
+JINX/.poiyomi/Master/Opaque/OverRender
+sStandard
+Mochie/Mochie's Uber Shader (Opaque)
+Custom/bluescreen
+Temmie / Cutie
+MAG/Blackhole
+sstandard
+rireal/screen overlay
+NEK0/ Black Color Shake
+Shader Forge/Distortion
+Custom/Object Shaders/Rainbow Rim
+Unlit/Color
+Custom/Screen (Single Image)/Galaxy Shader
+Custom/Screen (Single Image)/Circuits
+Custom/Object Shaders/ShatterWave Shader
+Custom/Object Shaders/Fire Shader
+Shinigami/The Eye (EDIT) v2
+Custom/Object Shaders/Hologram Effect (Transparent)
+InvisibleMaskBehind
+poiyomi/ShatterWave
+Naito/Rainbow World
+Copycat/Screenshake
+Particles/Alpha Blended Premultiply
+SFHologram/HologramShader
+Medical/Distortion/ColorShake
+Shader Forge/Rainbow 2
+RedMage/Cancerspace
+KriptoFX/ME/Distortion
+Sine VFX/StartSphereV2
+Kyran/Equation Shader/0.5
+Luka/MegaAE10
+Leviant's Shaders/ScreenSpace Ubershader v2.4
+Leviant's Shaders/Huyami Ubershader v2.2 beta
+Bender's Shaders/screen darken
+NEK0/Color Shake
+ShaderMan/Planet Shadertoy
+Zer0/CustomParallax
+New Amplify Shader 1
+DocMe/BeautifulShaderv0.1
+myXelf/Crashhehe
 0verrender
 11h2hh3hjej3
 80s Movie
