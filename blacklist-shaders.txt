@@ -1,12 +1,7 @@
-ParticlesAdditive
-CubedParadox/Flat Lit Toon
-Custom/Tessellation
 Eli/Tessellation
 Autist/GlitchScreen_v1
 CJ6132/uuhhh
-Unlit/FailShader
 KriptoFX/AIDS/DistortionParticles2
-Custom/Tessellation
 Izzy/IzzyFrag
 Custom/Tess
 Custom/Tes
