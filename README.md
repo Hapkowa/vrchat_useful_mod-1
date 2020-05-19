@@ -35,6 +35,7 @@ If you want to stay up to date join the discord server! [Click to join the updat
 - Anti-Shader with custom local block list and server-fetched blacklist with ability to disable fetched list use
 - Ability to send custom invite texts to friends outside and inside of your instance
 - Alternative fly controls for on-press type height adjustments
+- Per-player-audio options for the current instance
 
 Please make sure to install the managed folder correctly! (Oculus client is not supported)
 
