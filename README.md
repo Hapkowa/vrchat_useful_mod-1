@@ -55,7 +55,7 @@ Please make sure to install the managed folder correctly! (Oculus client is not 
 ![Example fav+](https://i.imgur.com/xWE8nmj.jpg)
 ![Example in-game menu button](https://i.imgur.com/NlolOFk.png)
 ![Example in-game direct menu](https://i.imgur.com/P8v5ktL.png)
-![Example in-game user options](https://i.imgur.com/Bz4K6Py.png)
+![Example in-game user options](https://i.imgur.com/A0gK9dq.png)
 ![Example shader menu](https://i.imgur.com/EAcnqg1.png)
 
 Disclaimer:
